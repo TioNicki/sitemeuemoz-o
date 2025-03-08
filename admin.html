@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Nunito", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffcccb; /* Fundo rosa */
+            transition: background-color 0.5s;
+        }
+
+        /* Estilo para o menu lateral */
+        .menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 9999; 
+            top: 0;
+            left: 0;
+            background-color: #493971; 
+            overflow-x: hidden;
+            transition: width 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .menu a {
+            padding: 15px 8px 15px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .menu a:hover {
+            color: #f1f1f1;
+        }
+
+        /* Botão para abrir o menu */
+        .pull-arrow {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            font-size: 30px;
+            cursor: pointer;
+            background-color: #493971;
+            color: #fff;
+            padding: 10px;
+            border-radius: 0 10px 10px 0;
+            z-index: 2;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.5s;
+        }
+
+        .menu.expanded {
+            width: 250px;
+        }
+
+        .menu a img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        /* Estilo do conteúdo principal */
+        .admin-panel {
+            margin-left: 20px;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .admin-panel h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+            display: none; /* Escondido por padrão */
+        }
+
+        .form-container input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .form-container input[type="text"], .form-container input[type="file"] {
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #ff69b4;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #ff1493;
+        }
+
+        .girar-button {
+            background-color: #ff69b4;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .girar-button:hover {
+            background-color: #ff1493;
+        }
+
+        /* Novo botão para resetar o giro */
+        .reset-button {
+            background-color: #ffcc00;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .reset-button:hover {
+            background-color: #ff9900;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Menu Lateral -->
+    <div id="menu" class="menu">
+        <a href="#" onclick="showPanel('sorteDoAmor')">Sorte do Amor</a>
+        <a href="#">Outros Links</a>
+        <a href="#">Configurações</a>
+    </div>
+
+    <!-- Botão para abrir/fechar o menu -->
+    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
+
+    <!-- Painel de Administração -->
+    <div id="adminPanel" class="admin-panel">
+        <h2>Painel de Administração</h2>
+        <div id="sorteDoAmor" class="form-container">
+            <h3>Adicionar Item para o Sorteio</h3>
+            <form id="addItemForm" enctype="multipart/form-data" method="POST">
+                <input type="text" name="nome" placeholder="Nome do Item" required>
+                <input type="file" name="imagem" required>
+                <button type="submit">Adicionar Imagem</button>
+            </form>
+        </div>
+
+        <div id="girarContainer">
+            <h3>Liberar Giro</h3>
+            <button class="girar-button" onclick="liberarGiro()">Liberar Giro</button>
+            <button class="reset-button" onclick="resetarGiro()">Resetar Giro</button> <!-- Novo botão -->
+        </div>
+    </div>
+
+    <script>
+        // Funções do menu lateral
+        function openMenu() {
+            document.getElementById("menu").classList.add("expanded");
+            document.getElementById("pullArrow").innerHTML = "&#x3c;";
+            document.getElementById("pullArrow").style.left = "250px";
+        }
+
+        function closeMenu() {
+            document.getElementById("menu").classList.remove("expanded");
+            document.getElementById("pullArrow").innerHTML = "&#x3e;";
+            document.getElementById("pullArrow").style.left = "0";
+        }
+
+        function toggleMenu() {
+            if (document.getElementById("menu").classList.contains("expanded")) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        }
+
+        // Função para mostrar painel correspondente
+        function showPanel(panelId) {
+            const panels = document.querySelectorAll('.form-container, #girarContainer');
+            panels.forEach(panel => panel.style.display = 'none');
+            document.getElementById(panelId).style.display = 'block';
+        }
+
+        // Função para liberar o giro
+        function liberarGiro() {
+            alert("O giro foi liberado!");
+        }
+
+        // Função para resetar o giro
+        function resetarGiro() {
+            alert("O giro foi resetado!");
+        }
+
+        // Função para adicionar um item (esse código precisa ser integrado com o backend)
+        document.getElementById('addItemForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/adicionar-item', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Item adicionado com sucesso!');
+                } else {
+                    alert('Erro ao adicionar item!');
+                }
+            } catch (error) {
+                alert('Erro ao enviar o formulário!');
+            }
+        });
+
+        // Inicializa a página com o painel de adicionar item
+        showPanel('sorteDoAmor');
+    </script>
+</body>
+</html>

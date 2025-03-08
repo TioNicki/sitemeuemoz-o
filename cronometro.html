@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronômetro</title>
+    <style>
+        body {
+            background-color: #ffe6e6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow: hidden; /* Impede a rolagem */
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
+        }
+
+        h1 {
+            color: #ff66b2;
+            font-size: 2.5em;
+            margin: 20px 0;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .timers {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+            overflow-y: auto; /* Permite rolagem interna se necessário */
+            max-height: 60vh; /* Limita a altura máxima */
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .timer {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            border: 2px solid #ff99cc;
+            border-radius: 10px;
+            background-color: #fff0f5;
+        }
+
+        .timer span {
+            font-size: 1.5em;
+            color: #ff66b2;
+        }
+
+        .timer h2 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #ff3385;
+        }
+
+        .timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-button img {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s;
+}
+
+.delete-button img:hover {
+    transform: scale(1.1);
+}
+        .add-timer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .add-timer button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #ff66b2;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
+        }
+
+        .add-timer button:hover {
+            background-color: #ff3385;
+        }
+
+        .dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .dialog input {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #ff99cc;
+            border-radius: 5px;
+        }
+
+        .dialog button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #ff66b2;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
+            margin-top: 10px;
+        }
+
+        .dialog button:hover {
+            background-color: #ff3385;
+        }
+
+        .dialog .close {
+            background-color: #ff4d4d;
+        }
+
+        .dialog .close:hover {
+            background-color: #e60000;
+        }
+
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .confirm-dialog button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #ff66b2;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
+        }
+
+        .confirm-dialog button:hover {
+            background-color: #ff3385;
+        }
+
+        .confirm-dialog .close {
+            background-color: #ff4d4d;
+        }
+
+        .confirm-dialog .close:hover {
+            background-color: #e60000;
+        }
+
+        @media (max-width: 600px) {
+            .dialog, .confirm-dialog {
+                width: 95%;
+                max-width: none;
+                padding: 30px;
+            }
+
+            .dialog input, .confirm-dialog input {
+                font-size: 1.2em;
+            }
+
+            .dialog button, .confirm-dialog button {
+                font-size: 1.2em;
+                padding: 15px 25px;
+            }
+
+            .pull-arrow {
+                top: 60px; /* Ajusta a posição da seta para não ficar sobre o título */
+            }
+        }
+
+        .menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #493971; /* Tom roxo */
+            overflow-x: hidden;
+            transition: width 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .menu.expanded {
+            width: 250px;
+        }
+
+        .menu a {
+            padding: 15px 8px 15px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            margin-top: 20px;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul em dispositivos móveis */
+        }
+
+        .menu a img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .menu a span {
+            display: none;
+        }
+
+        .menu.expanded a span {
+            display: inline;
+        }
+
+        .menu a:hover {
+            color: #f1f1f1;
+        }
+
+        .pull-arrow {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            font-size: 30px;
+            cursor: pointer;
+            background-color: #493971; /* Tom roxo */
+            color: #fff;
+            padding: 10px;
+            border-radius: 0 10px 10px 0;
+            z-index: 2;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.5s;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul em dispositivos móveis */
+            border: none;
+        }
+
+        .menu.expanded + .pull-arrow {
+            left: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu" class="menu">
+        <a href="index.html"><span>Para se lembrar...</span></a>
+        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
+        <a href="cronometro.html"><span>Cronômetro</span></a>
+        <a href="roleta.html"><span>Sorte do Amor</span></a>
+    </div>
+
+    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
+
+    <h1>Tempo Juntos</h1>
+    <div class="panel">
+        <div class="timers" id="timers">
+            <!-- Cronômetros serão adicionados aqui -->
+        </div>
+        <div class="add-timer">
+            <button onclick="showDialog()">Adicionar Novo Cronômetro</button>
+        </div>
+    </div>
+
+    <div class="dialog" id="dialog">
+        <input type="text" id="timerName" placeholder="Nome do Cronômetro">
+        <input type="text" id="timerDate" placeholder="Data (DD-MM-YYYY)" oninput="formatDate(this)">
+        <button onclick="addTimer()">Adicionar</button>
+        <button class="close" onclick="closeDialog()">Fechar</button>
+    </div>
+
+    <div class="confirm-dialog" id="confirmDialog">
+        <p id="confirmMessage"></p>
+        <button onclick="confirmDelete()">Sim</button>
+        <button class="close" onclick="closeConfirmDialog()">Não</button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", loadTimers);
+        let timerToDelete = null;
+    
+        function showDialog() {
+            document.getElementById('dialog').style.display = 'block';
+        }
+    
+        function closeDialog() {
+            document.getElementById('dialog').style.display = 'none';
+            clearDialogFields();
+        }
+    
+        function showConfirmDialog(timerDiv, name) {
+            timerToDelete = timerDiv;
+            document.getElementById('confirmMessage').textContent = `Deseja excluir o cronômetro "${name}"?`;
+            document.getElementById('confirmDialog').style.display = 'block';
+        }
+    
+        function closeConfirmDialog() {
+            document.getElementById('confirmDialog').style.display = 'none';
+        }
+    
+        function confirmDelete() {
+            if (timerToDelete) {
+                let name = timerToDelete.querySelector("h2").textContent;
+                timerToDelete.remove();
+                removeTimerFromStorage(name);
+                timerToDelete = null;
+            }
+            closeConfirmDialog();
+        }
+    
+        function formatDate(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
+            if (value.length > 5) value = value.slice(0, 5) + '-' + value.slice(5);
+            input.value = value;
+        }
+    
+        function addTimer() {
+    const name = document.getElementById('timerName').value;
+    const dateStr = document.getElementById('timerDate').value;
+
+    if (!name || !dateStr) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
+    const [day, month, year] = dateStr.split('-');
+    const startDate = new Date(`${year}-${month}-${day}`);
+
+    if (isNaN(startDate)) {
+        alert("Data inválida!");
+        return;
+    }
+
+    createTimerElement(name, startDate);
+    saveTimer(name, startDate);
+    closeDialog();
+}
+
+    
+function createTimerElement(name, startDate) {
+    const timerDiv = document.createElement("div");
+    timerDiv.className = "timer";
+
+    const title = document.createElement("h2");
+    title.textContent = name;
+
+    const timerContainer = document.createElement("div");
+    timerContainer.className = "timer-container";
+
+    const span = document.createElement("span");
+
+    // Criando o botão de exclusão
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-button";
+
+    // Criando a imagem da lixeira
+    const deleteImage = document.createElement("img");
+    deleteImage.src = "images/lixeira.png";
+    deleteImage.alt = "Excluir";
+
+    // Adicionando a imagem da lixeira ao botão de exclusão
+    deleteButton.appendChild(deleteImage);
+
+    // Definindo a função de exclusão
+    deleteButton.onclick = () => showConfirmDialog(timerDiv, name);
+
+    // Adicionando o cronômetro e a lixeira no mesmo container
+    timerContainer.appendChild(span);
+    timerContainer.appendChild(deleteButton);
+
+    // Adicionando os elementos ao cronômetro
+    timerDiv.appendChild(title);
+    timerDiv.appendChild(timerContainer);
+    document.getElementById("timers").appendChild(timerDiv);
+
+    updateTimer(span, startDate);
+    setInterval(() => updateTimer(span, startDate), 1000);
+}
+
+        function startTimer(span, startDate) {
+            setInterval(() => updateTimer(span, startDate), 1000);
+        }
+    
+        function updateTimer(span, startDate) {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            span.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+    
+        function saveTimer(name, startDate) {
+    // Recupera os cronômetros já salvos no localStorage
+    let timers = JSON.parse(localStorage.getItem("timers")) || [];
+    
+    // Adiciona o novo cronômetro
+    timers.push({ name, date: startDate.toISOString() });
+    
+    // Salva de volta no localStorage
+    localStorage.setItem("timers", JSON.stringify(timers));
+}
+
+function loadTimers() {
+    // Carrega os cronômetros do localStorage
+    let timers = JSON.parse(localStorage.getItem("timers")) || [];
+    
+    // Para cada cronômetro, cria o elemento na tela
+    timers.forEach(timer => {
+        const startDate = new Date(timer.date);
+        createTimerElement(timer.name, startDate);
+    });
+}
+
+function removeTimerFromStorage(name) {
+    // Recupera os cronômetros
+    let timers = JSON.parse(localStorage.getItem("timers")) || [];
+    
+    // Filtra o cronômetro que será removido
+    timers = timers.filter(timer => timer.name !== name);
+    
+    // Atualiza o localStorage
+    localStorage.setItem("timers", JSON.stringify(timers));
+}
+
+        function toggleMenu() {
+    let menu = document.getElementById("menu");
+    let arrow = document.getElementById("pullArrow");
+
+    if (menu.classList.contains("expanded")) {
+        menu.classList.remove("expanded");
+        arrow.innerHTML = "&#x3e;"; // Ícone para abrir
+    } else {
+        menu.classList.add("expanded");
+        arrow.innerHTML = "&#x3c;"; // Ícone para fechar
+    }
+}
+
+    </script>    
+</body>
+</html>

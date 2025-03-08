@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorte do Amor</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Nunito", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #ffcccb; /* Fundo rosa */
+            margin: 0;
+            transition: background-color 0.5s;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
+        }
+
+        .titulo {
+            color: #ff66b2;
+            font-size: 3em;
+            text-align: center;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+
+        .background-image {
+            position: fixed;
+            width: 100%; /* Tamanho inicial da imagem em porcentagem para ser responsivo */
+            height: auto;
+            position: relative; /* Ajustado para que os elementos abaixo sejam posicionados corretamente */
+            top: 25%; /* Ajuste conforme necessário */
+        }
+
+        .spin-button {
+            background-color: #ff69b4; /* Cor rosa */
+            color: white;
+            font-size: 1.5em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 150px;
+            z-index: 10;
+        }
+
+        .spin-button:hover {
+            background-color: #ff1493; /* Cor rosa mais forte ao passar o mouse */
+        }
+
+        .regras {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #333;
+            padding: 30px; /* Aumenta o preenchimento interno, tornando a caixa maior */
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            width: 90%; /* Ajusta a largura da caixa */
+            max-width: 800px; /* Limita a largura máxima */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .regras ul {
+            list-style-type: decimal; /* Garantir que o número seja mostrado */
+            list-style-position: inside; /* Move o número para dentro do item da lista */
+            padding: 0; /* Remove o preenchimento padrão */
+        }
+
+        .regras ul li {
+            margin-bottom: 10px; /* Espaço entre as regras */
+            font-size: 1.2em; /* Ajuste no tamanho da fonte */
+            color: #333; /* Cor do texto */
+        }
+
+        .slot-machine {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            font-size: 2em;
+            z-index: 100;
+        }
+
+        .slots {
+            display: flex;
+            gap: 20px;
+        }
+
+        .slot {
+            width: 80px;
+            height: 80px;
+            border: 2px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            background: rgb(255, 163, 235);
+        }
+
+        .prize-container {
+            position: relative;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .prize {
+            width: 300px;
+            height: auto;
+        }
+
+        .prize-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fca2ed; /* Cor vibrante de rosa */
+    font-size: 1em; /* Tamanho maior para mais destaque */
+    font-weight: 700; /* Negrito mais forte */
+    font-family: 'Poppins', sans-serif; /* Fonte moderna e elegante */
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* Sombra de texto mais suave */
+    letter-spacing: 2px; /* Espaçamento entre as letras para um toque mais estiloso */
+    text-transform: uppercase; /* Tornar o texto todo maiúsculo */
+    padding: 10px 20px; /* Adicionar um pequeno padding ao redor do texto */
+    border-radius: 15px; /* Bordas arredondadas para suavizar o visual */
+    background: linear-gradient(45deg, #FF6EC7, #FF9A8B); /* Gradiente de fundo */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sombra sutil para destacar */
+}
+
+body {
+    font-family: 'Poppins', sans-serif; /* Definindo a fonte para o corpo também */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+
+        .menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 9999; /* Maior z-index para garantir que o menu fique acima de tudo */
+            top: 0;
+            left: 0;
+            background-color: #493971; /* Tom roxo */
+            overflow-x: hidden;
+            transition: width 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .spin-button, .regras {
+            z-index: 1; /* Garantir que o botão de girar e as regras fiquem atrás do menu */
+        }
+
+        .slot-machine, .prize-container {
+            z-index: 1; /* Manter os outros elementos atrás do menu */
+        }
+
+        .menu.expanded {
+            width: 250px;
+        }
+
+        .menu a {
+            padding: 15px 8px 15px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .menu a img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .menu a span {
+            display: none;
+        }
+
+        .menu.expanded a span {
+            display: inline;
+        }
+
+        .menu a:hover {
+            color: #f1f1f1;
+        }
+
+        .pull-arrow {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            font-size: 30px;
+            cursor: pointer;
+            background-color: #493971; /* Tom roxo */
+            color: #fff;
+            padding: 10px;
+            border-radius: 0 10px 10px 0;
+            z-index: 2;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.5s;
+            border: none; /* Remove as bordas pretas */
+        }
+
+        .menu.expanded + .pull-arrow {
+            left: 250px;
+        }
+
+        @media (max-width: 600px) {
+            .menu a {
+                font-size: 20px;
+            }
+
+            .pull-arrow {
+                top: 75px; /* Ajusta a posição da seta para não ficar sobre o título */
+            }
+        }
+    /* Estilização do botão de informação */
+    .info-button {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: #ff69b4;
+        color: white;
+        font-size: 24px;
+        width: 50px;
+        height: 50px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: block;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-button:hover {
+        background-color: #ff1493;
+    }
+
+    /* Fundo fosco do modal */
+    /* Estilização do modal */
+.modal {
+    display: none; /* Inicia invisível */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Estilização da caixa de diálogo */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%; /* Ajusta a largura do modal para ser mais responsivo */
+    max-height: 50%; /* Limita a altura do modal */
+    overflow-y: auto; /* Adiciona barra de rolagem se necessário */
+}
+
+/* Ajustes para dispositivos móveis */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%; /* Aumenta a largura do modal em dispositivos móveis */
+        padding: 15px; /* Reduz o padding para melhor ajuste */
+    }
+
+    .info-button {
+        width: 45px; /* Reduz o tamanho do botão */
+        height: 45px;
+        font-size: 20px; /* Ajusta o tamanho da fonte */
+        top: 62.5%;
+    }
+}
+
+    /* Caixa de diálogo */
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 400px;
+    }
+    </style>
+</head>
+<body>
+    <h1 class="titulo">Sorte do Amor</h1>
+    <div id="menu" class="menu">
+        <a href="index.html"><span>Para se lembrar...</span></a>
+        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
+        <a href="cronometro.html"><span>Cronômetro</span></a>
+        <a href="roleta.html"><span>Sorte do amor</span></a>
+    </div>
+
+    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
+
+    <img src="images/caçaniqueis.png" alt="Caça-Níqueis" class="background-image">
+    
+    <button class="spin-button" onclick="startSlot()">Girar</button>
+    
+    <!-- Regras abaixo do botão -->
+    <div class="regras">
+        <h3>Regras:</h3>
+        <ul>
+            <li>Você tem direito a um giro gratuito por dia. Para conseguir mais giros, conclua missões na aba "Missões".</li>
+            <li>Você pode resgatar até 5 itens por mês, então escolha com sabedoria.</li>
+            <li>Os giros não são acumulativos. Caso não utilize o giro diário, ele será perdido.</li>
+            <li>Algumas missões podem oferecer giros extras ou itens exclusivos. Fique de olho!</li>
+            <li>Para resgatar um item, clique para "Resgatar" na janela de giro.</li>
+        </ul>
+    </div>
+
+    <div class="slot-machine" id="slotMachine" onclick="closeSlot(event)">
+        <div class="slots">
+            <div class="slot" id="slot1"><img src="images/bala.png" alt="Bala" width="60"></div>
+            <div class="slot" id="slot2"><img src="images/roupa.png" alt="Roupa" width="60"></div>
+            <div class="slot" id="slot3"><img src="images/chocolate.png" alt="Chocolate" width="60"></div>
+        </div>
+        <div class="prize-container" id="prizeContainer">
+            <img src="images/premio.gif" alt="Prêmio" class="prize" id="prizeImage">
+            <div class="prize-text" id="prizeText"></div>
+        </div>
+    </div>
+
+    <script>
+        function openMenu() {
+            document.getElementById("menu").classList.add("expanded");
+            document.getElementById("pullArrow").innerHTML = "&#x3c;";
+            document.getElementById("pullArrow").style.left = "250px";
+        }
+
+        function closeMenu() {
+            document.getElementById("menu").classList.remove("expanded");
+            document.getElementById("pullArrow").innerHTML = "&#x3e;";
+            document.getElementById("pullArrow").style.left = "0";
+        }
+
+        function toggleMenu() {
+            if (document.getElementById("menu").classList.contains("expanded")) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        }
+        function startSlot() {
+    document.body.style.backgroundColor = "black";
+    document.getElementById("slotMachine").style.display = "flex";
+    
+    // Defina uma lista de itens e suas probabilidades ponderadas
+    const symbols = [
+        { img: "images/bala.png", name: "Bala", weight: 50 },
+        { img: "images/brincos.png", name: "Brincos", weight: 10 },
+        { img: "images/boxnarnia.png", name: "Box de Narnia", weight: 2 },  // Peso bem baixo
+        { img: "images/chocolate.png", name: "Chocolate", weight: 20 },
+        { img: "images/kitkat.png", name: "Kitkat", weight: 20 },
+        { img: "images/ticket.png", name: "Vale Lanche", weight: 10 },
+        { img: "images/roupa.png", name: "Roupa", weight: 2 } // Peso bem baixo
+    ];
+    
+    let slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+    
+    // Função para selecionar um item com base em sua probabilidade
+    function getWeightedSymbol() {
+        const totalWeight = symbols.reduce((sum, symbol) => sum + symbol.weight, 0);
+        let randomWeight = Math.random() * totalWeight;
+        
+        for (let symbol of symbols) {
+            randomWeight -= symbol.weight;
+            if (randomWeight <= 0) {
+                return symbol;
+            }
+        }
+    }
+
+    let chosenSymbol = getWeightedSymbol();
+    let otherSymbol = getWeightedSymbol();
+    while (otherSymbol === chosenSymbol) {
+        otherSymbol = getWeightedSymbol();
+    }
+    
+    let results = [chosenSymbol, chosenSymbol, otherSymbol];
+    results = results.sort(() => Math.random() - 0.5);
+    
+    let interval = setInterval(() => {
+        slots.forEach(slot => {
+            let randomSymbol = getWeightedSymbol();
+            slot.innerHTML = `<img src="${randomSymbol.img}" alt="${randomSymbol.name}" width="60">`;
+        });
+    }, 100);
+    
+    setTimeout(() => {
+        clearInterval(interval);
+        slots.forEach((slot, index) => {
+            slot.innerHTML = `<img src="${results[index].img}" alt="${results[index].name}" width="60">`;
+        });
+        
+        document.getElementById("prizeText").textContent = `${chosenSymbol.name}`;
+        document.getElementById("prizeContainer").style.display = "block";
+    }, 5000);
+}
+        function closeSlot(event) {
+            if (!event.target.closest(".prize-container")) {
+                document.getElementById("slotMachine").style.display = "none";
+                document.body.style.backgroundColor = "#ffcccb";
+                document.getElementById("prizeContainer").style.display = "none";
+            }
+        }
+        window.onload = function() {
+    window.scrollTo(0, 0);
+
+    // Captura os elementos do modal e do botão
+    let infoButton = document.getElementById("infoButton");
+    let infoModal = document.getElementById("infoModal");
+
+    // Abre o modal quando o botão for clicado
+    infoButton.addEventListener("click", function () {
+        infoModal.style.display = "flex";
+    });
+
+    // Fecha o modal ao clicar fora da caixa de diálogo
+    infoModal.addEventListener("click", function (event) {
+        if (!event.target.closest(".modal-content")) {
+            infoModal.style.display = "none";
+        }
+    });
+};
+
+    </script>
+
+<!-- Botão de Informação -->
+<button id="infoButton" class="info-button">ℹ</button>
+
+<!-- Modal de Informações -->
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <p>Aqui estão as informações importantes que você deseja exibir.</p>
+    </div>
+</div>
+</body>
+</html>

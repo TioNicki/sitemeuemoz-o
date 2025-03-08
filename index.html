@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para se lembrar...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: pink;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            padding: 20px;
+        }
+        .texto-topo {
+            font-size: 1.2em;
+            color: white;
+            padding: 20px;
+            background-color: transparent;
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #493971;
+            overflow-x: hidden;
+            transition: width 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .menu.expanded {
+    width: 250px; /* Expande o menu quando ativado */
+}
+
+.pull-arrow {
+    left: 0;
+    transition: left 0.5s;
+}
+
+.menu.expanded + .pull-arrow {
+    left: 250px; /* Define a posição correta da seta ao expandir o menu */
+}
+
+
+        .menu a {
+            padding: 15px 8px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .menu a:hover {
+            color: #f1f1f1;
+        }
+
+        .pull-arrow {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            font-size: 25px;
+            cursor: pointer;
+            background-color: #493971;
+            color: #fff;
+            padding: 10px;
+            border-radius: 0 10px 10px 0;
+            border-color: transparent;
+            z-index: 2;
+            width: 30px; /* <<< Tamanho da seta, você pode alterar aqui */
+            height: 30px; /* <<< Tamanho da seta, você pode alterar aqui */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.5s;
+        }
+        /* Estilos das imagens */
+        .imagem-janeiro {
+    width: 60%; /* Ajuste o tamanho da largura */
+    height: auto; /* Ajuste a altura proporcionalmente ao tamanho */
+    max-width: 300px; /* Ajuste o tamanho máximo das imagens */
+    display: block;
+    margin: -50px; /* Ajuste a distância vertical e centralize a imagem */
+    border-radius: 10px; /* Ajuste o arredondamento da borda */
+    margin-left: 20px; /* Ajuste a distância lateral esquerda */
+    margin-right: 20px; /* Ajuste a distância lateral direita */
+}
+
+.imagem-seta {
+    width: 20%; /* Ajuste o tamanho da largura */
+    height: auto; /* Ajuste a altura proporcionalmente */
+    max-width: 200px; /* Ajuste o tamanho máximo das imagens da seta */
+    display: block;
+    margin: 20px auto; /* Ajuste a distância vertical e centralize a imagem */
+    border-radius: 5px;
+    position: relative; /* Necessário para usar "top", "left", etc. */
+    top: 10%; /* Ajuste a posição vertical da seta em relação ao seu local atual */
+    left: 40%; /* Ajuste a distância lateral da seta */
+    transform: translateX(-50%); /* Centraliza a seta horizontalmente */
+}
+
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            .menu.expanded {
+                width: 200px;
+            }
+            .menu a {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="menu" class="menu">
+        <a href="index.html"><span>Para se lembrar...</span></a>
+        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
+        <a href="cronometro.html"><span>Cronômetro</span></a>
+        <a href="roleta.html"><span>Sorte do Amor</span></a>
+    </div>
+
+    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
+
+    <h1>Para se lembrar...</h1>
+
+    <div class="texto-topo">
+        Aqui vamos para uma rápida viagem na nossa história e com alguns detalhes, onde você pode saber mais clicando em cada foto, me perdoe se tiver algum erro.
+    </div>
+
+    <!-- Imagem de Janeiro com classe específica -->
+    <img src="images/janeiro.png" alt="Imagem de janeiro" class="imagem-janeiro">
+
+    <!-- Imagem Seta com Pontos com classe específica -->
+    <img src="images/setacompontos.png" alt="Imagem seta com pontos" class="imagem-seta">
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            const arrow = document.getElementById("pullArrow");
+            if (menu.classList.contains("expanded")) {
+                menu.classList.remove("expanded");
+                arrow.innerHTML = "&#x3e;";
+                arrow.style.left = "0";
+            } else {
+                menu.classList.add("expanded");
+                arrow.innerHTML = "&#x3c;";
+                arrow.style.left = "200px";
+            }
+        }
+    </script>
+</body>
+</html>

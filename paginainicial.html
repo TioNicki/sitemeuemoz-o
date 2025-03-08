@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Notícias</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
+
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: "Nunito", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-color: #ffccff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #ff66b2;
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .news-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 70vh;
+            margin-bottom: 20px;
+        }
+
+        .news-item {
+            width: 100%;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-item h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #ff66b2;
+        }
+
+        .news-item p {
+            margin: 5px 0 0;
+            font-size: 1em;
+            color: #333;
+        }
+
+        /* Estilos do menu */
+        .menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #493971;
+            overflow-x: hidden;
+            transition: width 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .menu.expanded {
+            width: 250px;
+        }
+
+        .menu a {
+            padding: 15px 8px 15px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .menu a img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .menu a span {
+            display: none;
+        }
+
+        .menu.expanded a span {
+            display: inline;
+        }
+
+        .menu a:hover {
+            color: #f1f1f1;
+        }
+
+        .pull-arrow {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            font-size: 30px;
+            cursor: pointer;
+            background-color: #493971;
+            color: #fff;
+            padding: 10px;
+            border-radius: 0 10px 10px 0;
+            border: transparent;
+            z-index: 2;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.5s;
+        }
+
+        .menu.expanded + .pull-arrow {
+            left: 250px;
+        }
+
+        @media (max-width: 600px) {
+            .menu a {
+                font-size: 20px;
+            }
+
+            .pull-arrow {
+                top: 75px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="menu" class="menu">
+        <a href="index.html"><span>Para se lembrar...</span></a>
+        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
+        <a href="cronometro.html"><span>Cronômetro</span></a>
+        <a href="roleta.html"><span>Sorte do Amor</span></a>
+    </div>
+
+    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
+
+    <h1>Painel de Noticias</h1>
+    <div class="news-container" id="newsContainer">
+        <!-- Notícias serão adicionadas aqui -->
+    </div>
+
+    <script>
+        function loadNews() {
+            const newsContainer = document.getElementById('newsContainer');
+            let news = JSON.parse(localStorage.getItem("news")) || [];
+            newsContainer.innerHTML = ''; // Limpa o conteúdo atual
+
+            news.forEach(item => {
+                const newsElement = document.createElement('div');
+                newsElement.className = 'news-item';
+
+                const date = document.createElement('span');
+                date.className = 'news-date';
+                date.textContent = item.date;
+
+                const message = document.createElement('p');
+                message.className = 'news-message';
+                message.textContent = item.message;
+
+                newsElement.appendChild(date);
+                newsElement.appendChild(message);
+                newsContainer.appendChild(newsElement);
+            });
+        }
+
+        // Função para adicionar uma notícia ao painel
+        function addNews(title, content) {
+            const news = JSON.parse(localStorage.getItem("news")) || [];
+            const newNewsItem = {
+                date: new Date().toLocaleDateString(),
+                message: content
+            };
+            news.push(newNewsItem);
+            localStorage.setItem("news", JSON.stringify(news));
+            loadNews(); // Recarregar as notícias
+        }
+
+        // Carregar as notícias ao iniciar a página
+        document.addEventListener("DOMContentLoaded", loadNews);
+
+        function openMenu() {
+            document.getElementById("menu").classList.add("expanded");
+            document.getElementById("pullArrow").innerHTML = "&#x3c;";
+            document.getElementById("pullArrow").style.left = "250px";
+        }
+
+        function closeMenu() {
+            document.getElementById("menu").classList.remove("expanded");
+            document.getElementById("pullArrow").innerHTML = "&#x3e;";
+            document.getElementById("pullArrow").style.left = "0";
+        }
+
+        function toggleMenu() {
+            if (document.getElementById("menu").classList.contains("expanded")) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        }
+    </script>
+</body>
+</html>
