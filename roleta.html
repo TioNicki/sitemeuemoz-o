@@ -20,41 +20,42 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #ffcccb; /* Fundo rosa */
+            background-color: #e9ffef; /* Fundo rosa */
             margin: 0;
             transition: background-color 0.5s;
             -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
         }
-
-        .titulo {
-            color: #ff66b2;
-            font-size: 3em;
-            text-align: center;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            width: 100%;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-        }
-
-
+        .topo {
+    background-image: url('topo.png'); /* Substitua pelo caminho correto da imagem */
+    background-size: cover;
+    background-position: center;
+    height: 100%; /* Ajuste conforme necessário */
+    width: 100%;
+    position: absolute; /* Fixa a imagem no topo da página */
+    top: -8%;
+    left: 0;
+}
+        @keyframes playGif {
+    0% { background-position: 0; }
+    100% { background-position: -100%; }
+}
         .background-image {
             position: fixed;
             width: 100%; /* Tamanho inicial da imagem em porcentagem para ser responsivo */
             height: auto;
             position: relative; /* Ajustado para que os elementos abaixo sejam posicionados corretamente */
-            top: 25%; /* Ajuste conforme necessário */
+            top: 52%; /* Ajuste conforme necessário */
         }
 
         .spin-button {
-            background-color: #ff69b4; /* Cor rosa */
+            background-color: #cc3786; /* Cor rosa */
             color: white;
             font-size: 1.5em;
             padding: 10px 20px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 150px;
+            margin-top: 100%;
             z-index: 10;
         }
 
@@ -64,7 +65,7 @@
 
         .regras {
             text-align: left;
-            margin-top: 20px;
+            margin-top: 10%;
             font-size: 0.8em;
             color: #333;
             padding: 30px; /* Aumenta o preenchimento interno, tornando a caixa maior */
@@ -109,17 +110,26 @@
             display: flex;
             gap: 20px;
         }
+        @keyframes rpgBorder {
+    0% { border-color: red; }
+    25% { border-color: blue; }
+    50% { border-color: green; }
+    75% { border-color: yellow; }
+    100% { border-color: red; }
+}
 
-        .slot {
-            width: 80px;
-            height: 80px;
-            border: 2px solid white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            background: rgb(255, 163, 235);
-        }
+.slot {
+    width: 80px;
+    height: 80px;
+    border: 4px solid white; /* Define a borda inicial */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    background-color: rgb(146, 0, 114);
+    transition: background-color 0.5s ease;
+    animation: rpgBorder 0.9s infinite alternate; /* Aplica a animação na borda */
+}
 
         .prize-container {
             position: relative;
@@ -133,29 +143,28 @@
         }
 
         .prize-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fca2ed; /* Cor vibrante de rosa */
-    font-size: 1em; /* Tamanho maior para mais destaque */
-    font-weight: 700; /* Negrito mais forte */
-    font-family: 'Poppins', sans-serif; /* Fonte moderna e elegante */
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* Sombra de texto mais suave */
-    letter-spacing: 2px; /* Espaçamento entre as letras para um toque mais estiloso */
-    text-transform: uppercase; /* Tornar o texto todo maiúsculo */
-    padding: 10px 20px; /* Adicionar um pequeno padding ao redor do texto */
-    border-radius: 15px; /* Bordas arredondadas para suavizar o visual */
-    background: linear-gradient(45deg, #FF6EC7, #FF9A8B); /* Gradiente de fundo */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sombra sutil para destacar */
-}
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fffaf3; /* Cor vibrante de rosa */
+            font-size: 1em; /* Tamanho maior para mais destaque */
+            font-weight: 700; /* Negrito mais forte */
+            font-family: 'Poppins', sans-serif; /* Fonte moderna e elegante */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* Sombra de texto mais suave */
+            letter-spacing: 2px; /* Espaçamento entre as letras para um toque mais estiloso */
+            text-transform: uppercase; /* Tornar o texto todo maiúsculo */
+            padding: 10px 20px; /* Adicionar um pequeno padding ao redor do texto */
+            border-radius: 15px; /* Bordas arredondadas para suavizar o visual */
+            background: linear-gradient(45deg, #860048, #cc3786); /* Gradiente de fundo */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sombra sutil para destacar */
+        }
 
-body {
-    font-family: 'Poppins', sans-serif; /* Definindo a fonte para o corpo também */
-}
+        body {
+            font-family: 'Poppins', sans-serif; /* Definindo a fonte para o corpo também */
+        }
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
         .menu {
             height: 100%;
@@ -164,7 +173,7 @@ body {
             z-index: 9999; /* Maior z-index para garantir que o menu fique acima de tudo */
             top: 0;
             left: 0;
-            background-color: #493971; /* Tom roxo */
+            background-color: #ff73bf; /* Tom roxo */
             overflow-x: hidden;
             transition: width 0.5s;
             padding-top: 60px;
@@ -219,7 +228,7 @@ body {
             left: 0;
             font-size: 30px;
             cursor: pointer;
-            background-color: #493971; /* Tom roxo */
+            background-color: #ff73bf; /* Tom roxo */
             color: #fff;
             padding: 10px;
             border-radius: 0 10px 10px 0;
@@ -246,86 +255,74 @@ body {
                 top: 75px; /* Ajusta a posição da seta para não ficar sobre o título */
             }
         }
-    /* Estilização do botão de informação */
-    .info-button {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        background-color: #ff69b4;
-        color: white;
-        font-size: 24px;
-        width: 50px;
-        height: 50px;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: block;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
 
-    .info-button:hover {
-        background-color: #ff1493;
-    }
+        /* Estilização do botão de informação */
+        .info-button {
+            position: absolute;
+            top: 75%;
+            bottom: 20px;
+            right: 20px;
+            background-color: #cc3786;
+            color: #ffffff;
+            font-size: 24px;
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: block;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Fundo fosco do modal */
-    /* Estilização do modal */
-.modal {
-    display: none; /* Inicia invisível */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-/* Estilização da caixa de diálogo */
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 400px;
-    width: 90%; /* Ajusta a largura do modal para ser mais responsivo */
-    max-height: 50%; /* Limita a altura do modal */
-    overflow-y: auto; /* Adiciona barra de rolagem se necessário */
-}
-
-/* Ajustes para dispositivos móveis */
-@media (max-width: 768px) {
-    .modal-content {
-        width: 95%; /* Aumenta a largura do modal em dispositivos móveis */
-        padding: 15px; /* Reduz o padding para melhor ajuste */
-    }
-
-    .info-button {
-        width: 45px; /* Reduz o tamanho do botão */
-        height: 45px;
-        font-size: 20px; /* Ajusta o tamanho da fonte */
-        top: 65.3%;
-    }
-}
-
-    /* Caixa de diálogo */
-    .modal-content {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        max-width: 400px;
-    }
+        .info-button:hover {
+            background-color: #ff1493;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.664);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Animação de entrada */
+        @keyframes bounceIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        /* Ajustes para dispositivos móveis */
+        @media (max-width: 768px) {
+            .modal-content {
+                position: absolute;
+                width: 95%;
+                max-width: 400px; /* Evita que fique muito largo */
+                padding: 15px;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /* Centraliza */
+                background: #FF73BF;
+                border: none; /* Remove qualquer borda */
+                border-radius: 30px;
+                box-shadow: none; /* Remove qualquer sombra */
+                text-align: center;
+                overflow-y: auto;
+                max-height: 60vh; /* Evita que fique muito grande */
+            }
+        }
     </style>
 </head>
 <body>
-    <h1 class="titulo">Sorte do Amor</h1>
+    <div class="topo">
+        <img src="images/topo.png" alt="Imagem do topo" style="width: 100%; height: auto;">
+    </div>
     <div id="menu" class="menu">
         <a href="index.html"><span>Para se lembrar...</span></a>
         <a href="paginainicial.html"><span>Painel de Noticias</span></a>
@@ -362,7 +359,6 @@ body {
             <div class="prize-text" id="prizeText"></div>
         </div>
     </div>
-
     <script>
         function openMenu() {
             document.getElementById("menu").classList.add("expanded");
@@ -384,61 +380,63 @@ body {
             }
         }
         function startSlot() {
-    document.body.style.backgroundColor = "black";
-    document.getElementById("slotMachine").style.display = "flex";
-    
-    // Defina uma lista de itens e suas probabilidades ponderadas
-    const symbols = [
-        { img: "images/bala.png", name: "Bala", weight: 50 },
-        { img: "images/brincos.png", name: "Brincos", weight: 10 },
-        { img: "images/boxnarnia.png", name: "Box de Narnia", weight: 2 },  // Peso bem baixo
-        { img: "images/chocolate.png", name: "Chocolate", weight: 20 },
-        { img: "images/kitkat.png", name: "Kitkat", weight: 20 },
-        { img: "images/ticket.png", name: "Vale Lanche", weight: 10 },
-        { img: "images/roupa.png", name: "Roupa", weight: 2 } // Peso bem baixo
-    ];
-    
-    let slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
-    
-    // Função para selecionar um item com base em sua probabilidade
-    function getWeightedSymbol() {
-        const totalWeight = symbols.reduce((sum, symbol) => sum + symbol.weight, 0);
-        let randomWeight = Math.random() * totalWeight;
-        
-        for (let symbol of symbols) {
-            randomWeight -= symbol.weight;
-            if (randomWeight <= 0) {
-                return symbol;
+            document.body.style.backgroundColor = "black";
+            document.getElementById("slotMachine").style.display = "flex";
+            
+            // Defina uma lista de itens e suas probabilidades ponderadas
+            const symbols = [
+                { img: "images/bala.png", name: "Bala", weight: 50 },
+                { img: "images/brincos.png", name: "Brincos", weight: 10 },
+                { img: "images/boxnarnia.png", name: "Box de Narnia", weight: 2 },  // Peso bem baixo
+                { img: "images/chocolate.png", name: "Chocolate", weight: 20 },
+                { img: "images/kitkat.png", name: "Kitkat", weight: 20 },
+                { img: "images/ticket.png", name: "Vale Lanche", weight: 10 },
+                { img: "images/roupa.png", name: "Roupa", weight: 2 } // Peso bem baixo
+            ];
+            
+            let slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+            
+            
+            // Função para selecionar um item com base em sua probabilidade
+            function getWeightedSymbol() {
+                const totalWeight = symbols.reduce((sum, symbol) => sum + symbol.weight, 0);
+                let randomWeight = Math.random() * totalWeight;
+                
+                for (let symbol of symbols) {
+                    randomWeight -= symbol.weight;
+                    if (randomWeight <= 0) {
+                        return symbol;
+                    }
+                }
             }
-        }
-    }
 
-    let chosenSymbol = getWeightedSymbol();
-    let otherSymbol = getWeightedSymbol();
-    while (otherSymbol === chosenSymbol) {
-        otherSymbol = getWeightedSymbol();
-    }
-    
-    let results = [chosenSymbol, chosenSymbol, otherSymbol];
-    results = results.sort(() => Math.random() - 0.5);
-    
-    let interval = setInterval(() => {
-        slots.forEach(slot => {
-            let randomSymbol = getWeightedSymbol();
-            slot.innerHTML = `<img src="${randomSymbol.img}" alt="${randomSymbol.name}" width="60">`;
-        });
-    }, 100);
-    
-    setTimeout(() => {
-        clearInterval(interval);
-        slots.forEach((slot, index) => {
-            slot.innerHTML = `<img src="${results[index].img}" alt="${results[index].name}" width="60">`;
-        });
-        
-        document.getElementById("prizeText").textContent = `${chosenSymbol.name}`;
-        document.getElementById("prizeContainer").style.display = "block";
-    }, 5000);
-}
+            let chosenSymbol = getWeightedSymbol();
+            let otherSymbol = getWeightedSymbol();
+            while (otherSymbol === chosenSymbol) {
+                otherSymbol = getWeightedSymbol();
+            }
+            
+            let results = [chosenSymbol, chosenSymbol, otherSymbol];
+            results = results.sort(() => Math.random() - 0.5);
+            
+            let interval = setInterval(() => {
+                slots.forEach(slot => {
+                    let randomSymbol = getWeightedSymbol();
+                    slot.innerHTML = `<img src="${randomSymbol.img}" alt="${randomSymbol.name}" width="60">`;
+                });
+            }, 100);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+                slots.forEach((slot, index) => {
+                    slot.innerHTML = `<img src="${results[index].img}" alt="${results[index].name}" width="60">`;
+                });
+                
+                document.getElementById("prizeText").textContent = `${chosenSymbol.name}`;
+                document.getElementById("prizeContainer").style.display = "block";
+            }, 5000);
+        }
+
         function closeSlot(event) {
             if (!event.target.closest(".prize-container")) {
                 document.getElementById("slotMachine").style.display = "none";
@@ -447,35 +445,34 @@ body {
             }
         }
         window.onload = function() {
-    window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
 
-    // Captura os elementos do modal e do botão
-    let infoButton = document.getElementById("infoButton");
-    let infoModal = document.getElementById("infoModal");
+            // Captura os elementos do modal e do botão
+            let infoButton = document.getElementById("infoButton");
+            let infoModal = document.getElementById("infoModal");
 
-    // Abre o modal quando o botão for clicado
-    infoButton.addEventListener("click", function () {
-        infoModal.style.display = "flex";
-    });
+            // Abre o modal quando o botão for clicado
+            infoButton.addEventListener("click", function () {
+                infoModal.style.display = "flex";
+            });
 
-    // Fecha o modal ao clicar fora da caixa de diálogo
-    infoModal.addEventListener("click", function (event) {
-        if (!event.target.closest(".modal-content")) {
-            infoModal.style.display = "none";
-        }
-    });
-};
-
+            // Fecha o modal ao clicar fora da caixa de diálogo
+            infoModal.addEventListener("click", function (event) {
+                if (!event.target.closest(".modal-content")) {
+                    infoModal.style.display = "none";
+                }
+            });
+        };
     </script>
 
-<!-- Botão de Informação -->
-<button id="infoButton" class="info-button">ℹ</button>
+    <!-- Botão de Informação -->
+    <button id="infoButton" class="info-button">ℹ</button>
 
-<!-- Modal de Informações -->
-<div id="infoModal" class="modal">
-    <div class="modal-content">
-        <p>Aqui estão as informações importantes que você deseja exibir.</p>
-    </div>
-</div>
+    <!-- Modal de Informações -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">    
+            <img src="images/porcentagem.png" alt="Imagem de porcentagem" style="width: 100%; height: auto;">
+        </div>
+    </div>    
 </body>
 </html>
