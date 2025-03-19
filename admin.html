@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Administração</title>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
-
+        /* Reset de estilos */
         * {
             margin: 0;
             padding: 0;
@@ -14,245 +13,368 @@
         }
 
         body {
-            font-family: "Nunito", sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fb;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Container principal */
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Menu lateral */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            background-color: #ffcccb; /* Fundo rosa */
-            transition: background-color 0.5s;
-        }
-
-        /* Estilo para o menu lateral */
-        .menu {
-            height: 100%;
-            width: 0;
+            justify-content: flex-start;
             position: fixed;
-            z-index: 9999; 
+            left: -250px;
             top: 0;
-            left: 0;
-            background-color: #493971; 
-            overflow-x: hidden;
-            transition: width 0.5s;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            border-radius: 0 10px 10px 0;
+            height: 100vh;
+            transition: left 0.3s ease-in-out;
         }
 
-        .menu a {
-            padding: 15px 8px 15px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            margin-top: 20px;
-        }
-
-        .menu a:hover {
-            color: #f1f1f1;
-        }
-
-        /* Botão para abrir o menu */
-        .pull-arrow {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            font-size: 30px;
-            cursor: pointer;
-            background-color: #493971;
-            color: #fff;
-            padding: 10px;
-            border-radius: 0 10px 10px 0;
-            z-index: 2;
-            width: 30px;
-            height: 30px;
+        .sidebar-header {
+            height: 100px;  /* Altere para a altura desejada */
+            margin-bottom: 1px;  /* Distância entre o cabeçalho e o conteúdo do menu */
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: left 0.5s;
         }
 
-        .menu.expanded {
-            width: 250px;
+        .sidebar-nav {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
-        .menu a img {
+        .sidebar-nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar-nav ul li {
+            margin: 30px 0;
+        }
+
+        .sidebar-nav ul li a {
+            text-decoration: none;
+            color: #ecf0f1;
+            font-size: 1.1em;
+            transition: color 0.3s;
+        }
+
+        .sidebar-nav ul li a:hover {
+            color: #3498db;
+        }
+
+        /* Menu hamburguer */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
             width: 30px;
-            height: 30px;
-            margin-right: 10px;
+            height: 25px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
         }
 
-        /* Estilo do conteúdo principal */
-        .admin-panel {
-            margin-left: 20px;
-            padding: 20px;
-            max-width: 900px;
-            width: 100%;
+        /* Menu hamburguer */
+        .hamburger div {
+            width: 30px;
+            height: 5px;
+            background-color: #2c3e50;  /* Cor inicial */
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s; /* Transição suave para a cor também */
         }
 
-        .admin-panel h2 {
+        /* Quando o menu estiver ativo, a cor do "X" muda */
+        .hamburger.change div {
+            background-color: #ffffff;  /* Muda para branco quando o menu estiver aberto */
+        }
+
+        .hamburger.change div:nth-child(1) {
+            transform: translateY(10px) rotate(45deg);  /* Primeira linha vira para formar o "X" */
+        }
+
+        .hamburger.change div:nth-child(2) {
+            opacity: 0;  /* Segunda linha desaparece */
+        }
+
+        .hamburger.change div:nth-child(3) {
+            transform: translateY(-10px) rotate(-45deg);  /* Terceira linha vira para formar o "X" */
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            margin-left: 250px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h1 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #2c3e50;
         }
 
-        .form-container {
-            margin-bottom: 20px;
-            display: none; /* Escondido por padrão */
+        form {
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .form-container input[type="file"] {
-            margin-bottom: 10px;
-        }
-
-        .form-container input[type="text"], .form-container input[type="file"] {
-            padding: 10px;
+        label, textarea, input {
+            display: block;
             width: 100%;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 1em;
         }
 
-        .form-container button {
+        button {
             padding: 10px 20px;
-            background-color: #ff69b4;
-            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
             color: white;
+            border: none;
             border-radius: 5px;
-            cursor: pointer;
         }
 
-        .form-container button:hover {
-            background-color: #ff1493;
+        button:hover {
+            background-color: #2980b9;
         }
 
-        .girar-button {
-            background-color: #ff69b4;
+        #newsList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #newsList li {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .delete-button {
+            background-color: #ff0000;
             color: white;
-            padding: 15px 30px;
-            font-size: 1.2em;
             border: none;
-            border-radius: 10px;
+            padding: 5px 10px;
             cursor: pointer;
+            float: right;
+            border-radius: 5px;
         }
 
-        .girar-button:hover {
-            background-color: #ff1493;
+        .delete-button:hover {
+            background-color: #d40000;
         }
 
-        /* Novo botão para resetar o giro */
-        .reset-button {
-            background-color: #ffcc00;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+        /* Responsividade */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                width: 250px;
+                height: 100%;
+                z-index: 1000;
+            }
 
-        .reset-button:hover {
-            background-color: #ff9900;
-        }
+            .hamburger {
+                display: flex;
+            }
 
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content.active {
+                margin-left: 250px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Menu Lateral -->
-    <div id="menu" class="menu">
-        <a href="#" onclick="showPanel('sorteDoAmor')">Sorte do Amor</a>
-        <a href="#">Outros Links</a>
-        <a href="#">Configurações</a>
-    </div>
+    <div class="container">
+        <!-- Menu Lateral -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Painel de Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="paginainicial.html" id="home-link">Ir para Site</a></li>
+                    <li><a href="#" id="add-news-link">Adicionar Notícia</a></li>
+                    <li><a href="#" id="news-list-link">Lista de Notícias</a></li>
+                    <li><a href="#">Roleta</a></li>                
+                </ul>
+            </nav>
+        </aside>
 
-    <!-- Botão para abrir/fechar o menu -->
-    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
-
-    <!-- Painel de Administração -->
-    <div id="adminPanel" class="admin-panel">
-        <h2>Painel de Administração</h2>
-        <div id="sorteDoAmor" class="form-container">
-            <h3>Adicionar Item para o Sorteio</h3>
-            <form id="addItemForm" enctype="multipart/form-data" method="POST">
-                <input type="text" name="nome" placeholder="Nome do Item" required>
-                <input type="file" name="imagem" required>
-                <button type="submit">Adicionar Imagem</button>
-            </form>
+        <!-- Menu Hamburguer -->
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
 
-        <div id="girarContainer">
-            <h3>Liberar Giro</h3>
-            <button class="girar-button" onclick="liberarGiro()">Liberar Giro</button>
-            <button class="reset-button" onclick="resetarGiro()">Resetar Giro</button> <!-- Novo botão -->
-        </div>
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <section id="add-news-section" class="section active">
+                <h1>Adicionar Notícia</h1>
+                <form id="newsForm">
+                    <label for="title">Título</label>
+                    <input type="text" id="title" placeholder="Digite o título da notícia" required>
+
+                    <label for="content">Conteúdo</label>
+                    <textarea id="content" placeholder="Digite o conteúdo da notícia" rows="5" required></textarea>
+
+                    <button type="submit">Adicionar Notícia</button>
+                </form>
+            </section>
+
+            <section id="news-list-section" class="section">
+                <h1>Lista de Notícias</h1>
+                <ul id="newsList"></ul>
+            </section>
+        </main>
     </div>
 
     <script>
-        // Funções do menu lateral
-        function openMenu() {
-            document.getElementById("menu").classList.add("expanded");
-            document.getElementById("pullArrow").innerHTML = "&#x3c;";
-            document.getElementById("pullArrow").style.left = "250px";
-        }
-
-        function closeMenu() {
-            document.getElementById("menu").classList.remove("expanded");
-            document.getElementById("pullArrow").innerHTML = "&#x3e;";
-            document.getElementById("pullArrow").style.left = "0";
-        }
-
-        function toggleMenu() {
-            if (document.getElementById("menu").classList.contains("expanded")) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        }
-
-        // Função para mostrar painel correspondente
-        function showPanel(panelId) {
-            const panels = document.querySelectorAll('.form-container, #girarContainer');
-            panels.forEach(panel => panel.style.display = 'none');
-            document.getElementById(panelId).style.display = 'block';
-        }
-
-        // Função para liberar o giro
-        function liberarGiro() {
-            alert("O giro foi liberado!");
-        }
-
-        // Função para resetar o giro
-        function resetarGiro() {
-            alert("O giro foi resetado!");
-        }
-
-        // Função para adicionar um item (esse código precisa ser integrado com o backend)
-        document.getElementById('addItemForm').addEventListener('submit', async function(e) {
+        // Função para lidar com o envio do formulário
+        document.getElementById('newsForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            try {
-                const response = await fetch('/adicionar-item', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    alert('Item adicionado com sucesso!');
-                } else {
-                    alert('Erro ao adicionar item!');
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            fetch('https://sitemeuemoz-o.onrender.com/add-news', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ titulo: title, conteudo: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Notícia adicionada com sucesso!');
+                updateNewsList();
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar notícia:', error);
+                alert('Erro ao adicionar notícia!');
+            });
+        });
+
+        // Função para excluir uma notícia
+        function deleteNews(newsId) {
+            fetch(`https://sitemeuemoz-o.onrender.com/delete-news/${newsId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            } catch (error) {
-                alert('Erro ao enviar o formulário!');
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Notícia excluída com sucesso!');
+                updateNewsList();
+            })
+            .catch(error => {
+                console.error('Erro ao excluir notícia:', error);
+                alert('Erro ao excluir notícia!');
+            });
+        }
+
+        // Função para atualizar a lista de notícias
+        function updateNewsList() {
+            fetch('https://sitemeuemoz-o.onrender.com/get-news')
+                .then(response => response.json())
+                .then(newsList => {
+                    const newsListElement = document.getElementById('newsList');
+                    newsListElement.innerHTML = '';
+
+                    newsList.forEach(function(newsItem) {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <strong>${newsItem.titulo}</strong><br>
+                            <p>${newsItem.conteudo}</p>
+                            <small>Publicado em: ${new Date(newsItem.data_criacao).toLocaleString()}</small>
+                            <button class="delete-button" onclick="deleteNews('${newsItem.id}')">Excluir</button>
+                        `;
+                        newsListElement.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao obter as notícias:', error);
+                    alert('Erro ao carregar as notícias!');
+                });
+        }
+
+        // Funções para alternar entre as seções
+        document.getElementById('add-news-link').addEventListener('click', function() {
+            showSection('add-news-section');
+        });
+
+        document.getElementById('news-list-link').addEventListener('click', function() {
+            showSection('news-list-section');
+        });
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Alternar visibilidade do menu lateral no celular
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('active');
+            hamburger.classList.toggle('change');
+        });
+
+        // Fechar o menu lateral ao clicar fora dele
+        document.addEventListener('click', function(event) {
+            if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                sidebar.classList.remove('active');
+                mainContent.classList.remove('active');
+                hamburger.classList.remove('change');
             }
         });
 
-        // Inicializa a página com o painel de adicionar item
-        showPanel('sorteDoAmor');
+        // Atualiza a lista de notícias ao carregar
+        window.onload = updateNewsList;
     </script>
+
 </body>
 </html>
