@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { Client } = require('pg');
 const app = express();
-const port = 3000;
+
+// Porta dinâmica para produção (Render)
+const port = process.env.PORT || 3000;
 
 // Configuração do PostgreSQL
 const client = new Client({
@@ -11,6 +13,15 @@ const client = new Client({
     connectionTimeoutMillis: 10000,
     statement_timeout: 10000
 });
+
+// Conectar ao banco de dados
+client.connect()
+    .then(() => {
+        console.log('Conectado ao banco de dados');
+    })
+    .catch(err => {
+        console.error('Erro ao conectar:', err);
+    });
 
 // Configuração do CORS
 const corsOptions = {
@@ -24,7 +35,7 @@ app.use(cors(corsOptions));
 
 // Middleware para permitir conexões
 app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' http://localhost:3000;");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' https://sitemeuemoz-o.onrender.com;");
     next();
 });
 
@@ -86,12 +97,3 @@ app.delete('/delete-news/:id', async (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });
-
-// Conectar ao banco de dados
-client.connect()
-    .then(() => {
-        console.log('Conectado ao banco de dados');
-    })
-    .catch(err => {
-        console.error('Erro ao conectar:', err);
-    });
