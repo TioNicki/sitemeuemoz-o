@@ -1,230 +1,259 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://sitemeuemoz-o.onrender.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Notícias</title>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
 
-        * {
-            box-sizing: border-box;
-            padding: 0;
-            margin: 0;
-        }
+/* Corpo da página */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background-color: #ffccff;
+    margin: 0;
+    overflow-x: hidden; /* Remover o overflow que pode estar escondendo */
+    -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
+}
 
-        body {
-            font-family: "Nunito", sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            background-color: #ffccff;
-            margin: 0;
-            overflow-x: hidden;
-        }
+/* Título da página */
+h1 {
+    color: #ff66b2;
+    font-size: 2.5em;
+    margin: 20px 0;
+}
 
-        h1 {
-            color: #ff66b2;
-            font-size: 3em;
-            margin: 20px 0;
-        }
+/* Cada item de notícia será agora um contêiner individual */
+.news-item {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%;
+    max-width: 800px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
 
-        .news-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90%;
-            max-width: 800px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 70vh;
-            margin-bottom: 20px;
-        }
+/* Efeito de hover para os itens de notícias */
+.news-item:hover {
+    transform: scale(1.02);
+}
 
-        .news-item {
-            width: 100%;
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-        }
+/* Título da notícia */
+.news-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+}
 
-        .news-item:last-child {
-            border-bottom: none;
-        }
+/* Conteúdo da notícia */
+.news-content {
+    font-size: 1.1em;
+    color: #555;
+    line-height: 1.6;
+}
 
-        .news-item h2 {
-            margin: 0;
-            font-size: 1.5em;
-            color: #ff66b2;
-        }
+/* Estilo da data da notícia */
+.news-date {
+    font-size: 0.9em;
+    color: #999;
+    margin-top: 10px;
+    display: block;
+}
 
-        .news-item p {
-            margin: 5px 0 0;
-            font-size: 1em;
-            color: #333;
-        }
+/* Estilos responsivos para telas menores */
 
-        /* Estilos do menu */
-        .menu {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #493971;
-            overflow-x: hidden;
-            transition: width 0.5s;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            border-radius: 0 10px 10px 0;
-        }
+/* Para telas de tamanho médio (tablet) */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em; /* Reduzir o título para telas menores */
+    }
 
-        .menu.expanded {
-            width: 250px;
-        }
+    .news-title {
+        font-size: 1.5em; /* Reduzir o tamanho do título para telas menores */
+    }
 
-        .menu a {
-            padding: 15px 8px 15px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            margin-top: 20px;
-        }
+    .news-content {
+        font-size: 1em; /* Ajustar o tamanho do texto do conteúdo */
+    }
 
-        .menu a img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
+    .news-item {
+        padding: 15px; /* Ajustar o padding nas notícias */
+    }
+}
 
-        .menu a span {
-            display: none;
-        }
+/* Para telas de smartphones (máximo 480px de largura) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.7em; /* Ajuste para tela menor */
+    }
 
-        .menu.expanded a span {
-            display: inline;
-        }
+    .news-title {
+        font-size: 1.3em; /* Ajuste ainda maior para telas muito pequenas */
+    }
 
-        .menu a:hover {
-            color: #f1f1f1;
-        }
+    .news-content {
+        font-size: 0.9em;
+    }
 
-        .pull-arrow {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            font-size: 30px;
-            cursor: pointer;
-            background-color: #493971;
-            color: #fff;
-            padding: 10px;
-            border-radius: 0 10px 10px 0;
-            border: transparent;
-            z-index: 2;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: left 0.5s;
-        }
+    .news-item {
+        padding: 10px; /* Reduzir o padding nas notícias */
+        width: 100%; /* Garantir que ocupe toda a largura da tela */
+        max-width: 100%; /* Garantir que a largura seja 100% */
+    }
+}
 
-        .menu.expanded + .pull-arrow {
-            left: 250px;
-        }
+.menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #ff73bf;
+    overflow-x: hidden;
+    transition: width 0.5s;
+    padding-top: 60px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0 10px 10px 0;
+}
 
-        @media (max-width: 600px) {
-            .menu a {
-                font-size: 20px;
-            }
+.menu.expanded {
+    width: 250px;
+}
 
-            .pull-arrow {
-                top: 75px;
-            }
-        }
+.menu a {
+    padding: 15px 8px 15px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+
+.menu a:hover {
+    color: #f1f1f1;
+}
+
+.pull-arrow {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    font-size: 30px;
+    cursor: pointer;
+    background-color: #ff73bf;
+    color: #fff;
+    padding: 10px;
+    border-radius: 0 10px 10px 0;
+    border: transparent;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: left 0.5s;
+}
+
+.menu.expanded + .pull-arrow {
+    left: 250px;
+}
     </style>
 </head>
 <body>
     <div id="menu" class="menu">
-        <a href="index.html"><span>Para se lembrar...</span></a>
-        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
-        <a href="cronometro.html"><span>Cronômetro</span></a>
-        <a href="roleta.html"><span>Sorte do Amor</span></a>
+        <a href="index.html">Para se lembrar...</a>
+        <a href="paginainicial.html">Painel de Notícias</a>
+        <a href="cronometro.html">Cronômetro</a>
+        <a href="roleta.html">Sorte do Amor</a>
     </div>
 
     <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
 
-    <h1>Painel de Noticias</h1>
-    <div class="news-container" id="newsContainer">
-        <!-- Notícias serão adicionadas aqui -->
-    </div>
+    <h1>Painel de Notícias</h1>
+    <div class="news-container" id="newsContainer"></div>
 
     <script>
-        function loadNews() {
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const offset = -3; // GMT-3
+    date.setHours(date.getHours() + offset);
+
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // 24h
+    };
+    
+    return new Intl.DateTimeFormat('pt-BR', options).format(date);
+}
+
+function loadNews() {
+    fetch('https://sitemeuemoz-o.onrender.com/get-news')
+        .then(response => response.json())
+        .then(news => {
             const newsContainer = document.getElementById('newsContainer');
-            let news = JSON.parse(localStorage.getItem("news")) || [];
-            newsContainer.innerHTML = ''; // Limpa o conteúdo atual
+            newsContainer.innerHTML = '';
 
             news.forEach(item => {
                 const newsElement = document.createElement('div');
                 newsElement.className = 'news-item';
 
+                const title = document.createElement('h2');
+                title.className = 'news-title';
+                title.textContent = item.titulo;
+
+                const content = document.createElement('p');
+                content.className = 'news-content';
+                content.textContent = item.conteudo;
+
                 const date = document.createElement('span');
                 date.className = 'news-date';
-                date.textContent = item.date;
+                date.textContent = formatDate(item.data_criacao);
 
-                const message = document.createElement('p');
-                message.className = 'news-message';
-                message.textContent = item.message;
-
+                newsElement.appendChild(title);
+                newsElement.appendChild(content);
                 newsElement.appendChild(date);
-                newsElement.appendChild(message);
                 newsContainer.appendChild(newsElement);
             });
-        }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar as notícias:', error);
+        });
+}
 
-        // Função para adicionar uma notícia ao painel
-        function addNews(title, content) {
-            const news = JSON.parse(localStorage.getItem("news")) || [];
-            const newNewsItem = {
-                date: new Date().toLocaleDateString(),
-                message: content
-            };
-            news.push(newNewsItem);
-            localStorage.setItem("news", JSON.stringify(news));
-            loadNews(); // Recarregar as notícias
-        }
+// Carregar notícias quando o conteúdo da página estiver carregado
+document.addEventListener("DOMContentLoaded", loadNews);
 
-        // Carregar as notícias ao iniciar a página
-        document.addEventListener("DOMContentLoaded", loadNews);
-
-        function openMenu() {
-            document.getElementById("menu").classList.add("expanded");
-            document.getElementById("pullArrow").innerHTML = "&#x3c;";
-            document.getElementById("pullArrow").style.left = "250px";
-        }
-
-        function closeMenu() {
-            document.getElementById("menu").classList.remove("expanded");
-            document.getElementById("pullArrow").innerHTML = "&#x3e;";
-            document.getElementById("pullArrow").style.left = "0";
-        }
-
-        function toggleMenu() {
-            if (document.getElementById("menu").classList.contains("expanded")) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        }
+function toggleMenu() {
+    const menu = document.getElementById("menu");
+    const button = document.getElementById("pullArrow");
+    if (menu.classList.contains("expanded")) {
+        menu.classList.remove("expanded");
+        button.innerHTML = "&#x3e;";
+        button.style.left = "0";
+    } else {
+        menu.classList.add("expanded");
+        button.innerHTML = "&#x3c;";
+        button.style.left = "250px";
+    }
+}
     </script>
 </body>
 </html>
