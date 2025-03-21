@@ -2,9 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { Client } = require('pg');
 const app = express();
-
-// Porta dinâmica para produção (Render)
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 // Configuração do PostgreSQL
 const client = new Client({
@@ -14,34 +12,54 @@ const client = new Client({
     statement_timeout: 10000
 });
 
-// Conectar ao banco de dados
-client.connect()
-    .then(() => {
-        console.log('Conectado ao banco de dados');
-    })
-    .catch(err => {
-        console.error('Erro ao conectar:', err);
-    });
-
-// Configuração do CORS
 const corsOptions = {
-    origin: '*', // Permite qualquer origem
-    methods: ['GET', 'POST', 'DELETE'], // Permite os métodos GET, POST e DELETE
-    allowedHeaders: ['Content-Type'], // Permite o cabeçalho Content-Type
-    preflightContinue: true, // Habilita a resposta para preflight requests
-    optionsSuccessStatus: 204 // Código de status para preflight request
+    origin: 'http://192.168.18.26:5500',  // Apenas seu frontend local
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 200
 };
+
 app.use(cors(corsOptions));
+app.options('*', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "http://192.168.18.26:5500");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.sendStatus(200);
+});
+
 
 // Middleware para permitir conexões
 app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' https://sitemeuemoz-o.onrender.com;");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' https://sitemeuemoz-o.onrender.com/salvar-roleta;");
     next();
 });
 
 // Middleware
 app.use(express.static('public'));
 app.use(express.json()); // Para processar dados JSON no corpo das requisições
+
+app.use((req, res, next) => {
+    console.log("CORS Headers:", res.getHeaders());
+    next();
+});
+
+app.post("/salvar-roleta", async (req, res) => {
+    try {
+        const { premios } = req.body;
+        if (!premios || !Array.isArray(premios)) {
+            return res.status(400).json({ error: "Dados inválidos." });
+        }
+
+        const query = "INSERT INTO roleta_resultados (premios, data) VALUES ($1, NOW())";
+        await client.query(query, [JSON.stringify(premios)]);
+
+        res.json({ success: true, message: "Resultados salvos com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao salvar:", error);
+        res.status(500).json({ error: "Erro no servidor." });
+    }
+});
 
 // Rota para adicionar uma notícia
 app.post('/add-news', async (req, res) => {
@@ -92,6 +110,15 @@ app.delete('/delete-news/:id', async (req, res) => {
         res.status(500).json({ message: 'Erro ao excluir notícia' });
     }
 });
+
+// Conectar ao banco de dados
+client.connect()
+    .then(() => {
+        console.log('Conectado ao banco de dados');
+    })
+    .catch(err => {
+        console.error('Erro ao conectar:', err);
+    });
 
 // Iniciar o servidor
 app.listen(port, () => {
