@@ -13,7 +13,7 @@ const client = new Client({
 });
 
 const corsOptions = {
-    origin: 'http://192.168.18.26:5500',  // Apenas seu frontend local
+    origin: '*',  // Apenas seu frontend local
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
