@@ -26,7 +26,7 @@
             -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
         }
         .topo {
-    background-image: url('topo.png'); /* Substitua pelo caminho correto da imagem */
+    background-image: url('images/topo.png'); /* Substitua pelo caminho correto da imagem */
     background-size: cover;
     background-position: center;
     height: 100%; /* Ajuste conforme necessário */
@@ -324,6 +324,7 @@
         <img src="images/topo.png" alt="Imagem do topo" style="width: 100%; height: auto;">
     </div>
     <div id="menu" class="menu">
+        <a href="index.html"><span>Para se lembrar...</span></a>
         <a href="paginainicial.html"><span>Painel de Noticias</span></a>
         <a href="cronometro.html"><span>Cronômetro</span></a>
         <a href="roleta.html"><span>Sorte do amor</span></a>
@@ -379,62 +380,87 @@
             }
         }
         function startSlot() {
-            document.body.style.backgroundColor = "black";
-            document.getElementById("slotMachine").style.display = "flex";
-            
-            // Defina uma lista de itens e suas probabilidades ponderadas
-            const symbols = [
-                { img: "images/bala.png", name: "Bala", weight: 50 },
-                { img: "images/brincos.png", name: "Brincos", weight: 10 },
-                { img: "images/boxnarnia.png", name: "Box de Narnia", weight: 2 },  // Peso bem baixo
-                { img: "images/chocolate.png", name: "Chocolate", weight: 20 },
-                { img: "images/kitkat.png", name: "Kitkat", weight: 20 },
-                { img: "images/ticket.png", name: "Vale Lanche", weight: 10 },
-                { img: "images/roupa.png", name: "Roupa", weight: 2 } // Peso bem baixo
-            ];
-            
-            let slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
-            
-            
-            // Função para selecionar um item com base em sua probabilidade
-            function getWeightedSymbol() {
-                const totalWeight = symbols.reduce((sum, symbol) => sum + symbol.weight, 0);
-                let randomWeight = Math.random() * totalWeight;
-                
-                for (let symbol of symbols) {
-                    randomWeight -= symbol.weight;
-                    if (randomWeight <= 0) {
-                        return symbol;
-                    }
-                }
-            }
+    document.body.style.backgroundColor = "black";
+    document.getElementById("slotMachine").style.display = "flex";
+    
+    // Defina uma lista de itens e suas probabilidades ponderadas
+    const symbols = [
+        { img: "images/bala.png", name: "Bala", weight: 50 },
+        { img: "images/brincos.png", name: "Brincos", weight: 10 },
+        { img: "images/boxnarnia.png", name: "Box de Narnia", weight: 2 },
+        { img: "images/chocolate.png", name: "Chocolate", weight: 20 },
+        { img: "images/kitkat.png", name: "Kitkat", weight: 20 },
+        { img: "images/ticket.png", name: "Vale Lanche", weight: 10 },
+        { img: "images/roupa.png", name: "Roupa", weight: 2 }
+    ];
 
-            let chosenSymbol = getWeightedSymbol();
-            let otherSymbol = getWeightedSymbol();
-            while (otherSymbol === chosenSymbol) {
-                otherSymbol = getWeightedSymbol();
+    let slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+
+    // Função para selecionar um item com base em sua probabilidade
+    function getWeightedSymbol() {
+        const totalWeight = symbols.reduce((sum, symbol) => sum + symbol.weight, 0);
+        let randomWeight = Math.random() * totalWeight;
+        
+        for (let symbol of symbols) {
+            randomWeight -= symbol.weight;
+            if (randomWeight <= 0) {
+                return symbol;
             }
-            
-            let results = [chosenSymbol, chosenSymbol, otherSymbol];
-            results = results.sort(() => Math.random() - 0.5);
-            
-            let interval = setInterval(() => {
-                slots.forEach(slot => {
-                    let randomSymbol = getWeightedSymbol();
-                    slot.innerHTML = `<img src="${randomSymbol.img}" alt="${randomSymbol.name}" width="60">`;
-                });
-            }, 100);
-            
-            setTimeout(() => {
-                clearInterval(interval);
-                slots.forEach((slot, index) => {
-                    slot.innerHTML = `<img src="${results[index].img}" alt="${results[index].name}" width="60">`;
-                });
-                
-                document.getElementById("prizeText").textContent = `${chosenSymbol.name}`;
-                document.getElementById("prizeContainer").style.display = "block";
-            }, 5000);
         }
+    }
+
+    let chosenSymbol = getWeightedSymbol();
+    let otherSymbol = getWeightedSymbol();
+    while (otherSymbol === chosenSymbol) {
+        otherSymbol = getWeightedSymbol();
+    }
+    
+    let results = [chosenSymbol, chosenSymbol, otherSymbol];
+    results = results.sort(() => Math.random() - 0.5);
+    
+    let interval = setInterval(() => {
+        slots.forEach(slot => {
+            let randomSymbol = getWeightedSymbol();
+            slot.innerHTML = `<img src="${randomSymbol.img}" alt="${randomSymbol.name}" width="60">`;
+        });
+    }, 100);
+    
+    setTimeout(() => {
+        clearInterval(interval);
+        slots.forEach((slot, index) => {
+            slot.innerHTML = `<img src="${results[index].img}" alt="${results[index].name}" width="60">`;
+        });
+        
+        // Exibe o prêmio para o usuário
+        document.getElementById("prizeText").textContent = `${chosenSymbol.name}`;
+        document.getElementById("prizeContainer").style.display = "block";
+
+        // Envia os resultados ao servidor
+        enviarResultados(results);
+    }, 5000);
+}
+
+// Função para enviar os resultados ao servidor
+async function enviarResultados(resultados) {
+    try {
+        const response = await fetch('https://sitemeuemoz-o.onrender.com/salvar-roleta', {
+            method: 'POST',
+            mode: 'cors',  // Importante para evitar bloqueio
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sorteados: resultados.map(result => result.name) }), // Envia apenas os nomes dos itens sorteados
+        });
+
+        if (response.ok) {
+            console.log("Resultados enviados com sucesso!");
+        } else {
+            console.error("Erro ao enviar resultados:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Erro ao tentar enviar os resultados:", error);
+    }
+}
 
         function closeSlot(event) {
             if (!event.target.closest(".prize-container")) {
