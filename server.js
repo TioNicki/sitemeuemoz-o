@@ -4,29 +4,19 @@ const { Client } = require('pg');
 const app = express();
 const port = 3000;
 
-// Configuração do PostgreSQL
-const client = new Client({
-    connectionString: 'postgresql://postgres:HfHwmSznI0eeFFLs@perceptibly-planetary-catbird.data-1.use1.tembo.io:5432/postgres',
-    ssl: { rejectUnauthorized: false },
-    connectionTimeoutMillis: 10000,
-    statement_timeout: 10000
-});
 
 const corsOptions = {
     origin: '*',  // Apenas seu frontend local
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
-app.options('*', (req, res) => {
-    res.header("Access-Control-Allow-Origin", "http://192.168.18.26:5500");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.sendStatus(200);
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src *;");
+    next();
 });
+
 
 
 // Middleware para permitir conexões
@@ -44,23 +34,54 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post("/salvar-roleta", async (req, res) => {
-    try {
-        const { premios } = req.body;
-        if (!premios || !Array.isArray(premios)) {
-            return res.status(400).json({ error: "Dados inválidos." });
-        }
+// Configuração do PostgreSQL
 
-        const query = "INSERT INTO roleta_resultados (premios, data) VALUES ($1, NOW())";
-        await client.query(query, [JSON.stringify(premios)]);
-
-        res.json({ success: true, message: "Resultados salvos com sucesso!" });
-    } catch (error) {
-        console.error("Erro ao salvar:", error);
-        res.status(500).json({ error: "Erro no servidor." });
-    }
+const client = new Client({
+    connectionString: 'postgresql://postgres:HfHwmSznI0eeFFLs@perceptibly-planetary-catbird.data-1.use1.tembo.io:5432/postgres',
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000,
+    statement_timeout: 10000
 });
 
+client.connect()
+    .then(() => {
+        console.log('Conectado ao banco de dados');
+    })
+    .catch(err => {
+        console.error('Erro ao conectar:', err);
+    });
+
+    app.post("/salvar-roleta", async (req, res) => {
+        try {
+            console.log("Dados recebidos:", req.body);
+    
+            const { premios } = req.body;
+            console.log("Premios recebidos:", premios); // Verificando o formato dos dados recebidos
+    
+            if (!premios || !Array.isArray(premios)) {
+                return res.status(400).json({ error: "Formato inválido. O campo 'premios' deve ser um array." });
+            }
+    
+            // Log antes da inserção
+            console.log("Inserindo resultados na tabela 'roleta_resultados'...");
+    
+            // Iterando sobre os resultados e fazendo a inserção no banco de dados
+            for (const premio of premios) {
+                const item_sorteado = premio.item;  // A variável correta com o nome do prêmio
+                const data_sorteio = new Date().toISOString();  // Data no formato ISO 8601
+    
+                console.log(`Inserindo item: ${item_sorteado}, Data: ${data_sorteio}`);
+                
+                await pool.query('INSERT INTO roleta_resultados (item_sorteado, data_sorteio) VALUES ($1, $2) RETURNING *', [item_sorteado, data_sorteio]);
+            }
+    
+            res.json({ success: true, message: "Resultados salvos com sucesso!" });
+        } catch (error) {
+            console.error("Erro ao salvar:", error); // Capturando detalhes do erro
+            res.status(500).json({ error: "Erro no servidor." });
+        }
+    });
+    
 // Rota para adicionar uma notícia
 app.post('/add-news', async (req, res) => {
     const { titulo, conteudo } = req.body;
@@ -110,16 +131,6 @@ app.delete('/delete-news/:id', async (req, res) => {
         res.status(500).json({ message: 'Erro ao excluir notícia' });
     }
 });
-
-// Conectar ao banco de dados
-client.connect()
-    .then(() => {
-        console.log('Conectado ao banco de dados');
-    })
-    .catch(err => {
-        console.error('Erro ao conectar:', err);
-    });
-
 // Iniciar o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
