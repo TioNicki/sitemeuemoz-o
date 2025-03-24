@@ -52,17 +52,6 @@ client.connect()
     .catch(err => {
         console.error('Erro ao conectar:', err);
     });
-
-    app.get('/missoes', async (req, res) => {
-        try {
-            const result = await client.query('SELECT * FROM missoes');
-            res.json(result.rows);
-        } catch (err) {
-            console.error('Erro ao buscar missões', err);
-            res.status(500).send('Erro ao buscar missões');
-        }
-    });
-    
 // Rota para adicionar uma notícia
 app.post('/add-news', async (req, res) => {
     const { titulo, conteudo } = req.body;
