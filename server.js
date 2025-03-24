@@ -7,7 +7,7 @@ const port = 3000;
 
 const corsOptions = {
     origin: '*',  // Apenas seu frontend local
-    methods: ['GET', 'POST', 'OPTIONS'],
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
