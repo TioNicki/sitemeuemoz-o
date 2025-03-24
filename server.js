@@ -57,16 +57,16 @@ client.connect()
 
     // Rota para adicionar uma missão
 app.post('/add-missao', async (req, res) => {
-    const { titulo, descricao, status } = req.body;
+    const { titulo, descricao, recompensa } = req.body;
 
-    if (!titulo || !descricao || !status) {
-        return res.status(400).json({ error: 'Título, descrição e status são obrigatórios!' });
+    if (!titulo || !descricao || !recompensa) {
+        return res.status(400).json({ error: 'Título, descrição e recompensa são obrigatórios!' });
     }
 
     try {
         const result = await client.query(
-            'INSERT INTO missoes (titulo, descricao, status) VALUES ($1, $2, $3) RETURNING *',
-            [titulo, descricao, status]
+            'INSERT INTO missoes (titulo, descricao, recompensa) VALUES ($1, $2, $3) RETURNING *',
+            [titulo, descricao, recompensa]
         );
         res.status(201).json(result.rows[0]); // Retorna a missão adicionada
     } catch (err) {
