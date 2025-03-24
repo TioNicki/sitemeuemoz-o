@@ -78,8 +78,9 @@ app.post('/add-missao', async (req, res) => {
 // Rota para recuperar todas as missões
 app.get('/get-missoes', async (req, res) => {
     try {
-        const result = await client.query('SELECT * FROM missoes ORDER BY id ASC');
-        res.status(200).json(result.rows); // Retorna todas as missões
+        // Alteração aqui para incluir a recompensa na consulta
+        const result = await client.query('SELECT id, titulo, descricao, status, recompensa FROM missoes ORDER BY id ASC');
+        res.status(200).json(result.rows); // Retorna todas as missões com recompensa
     } catch (err) {
         console.error('Erro ao obter missões:', err);
         res.status(500).json({ error: 'Erro ao obter missões' });
