@@ -75,7 +75,7 @@ client.connect()
             res.status(500).json({ error: 'Erro ao adicionar a missão' });
         }
     });
-    
+
 // Rota para recuperar todas as missões
 app.get('/get-missoes', async (req, res) => {
     try {
@@ -128,6 +128,33 @@ app.delete('/delete-missao/:id', async (req, res) => {
     } catch (err) {
         console.error('Erro ao excluir missão:', err);
         res.status(500).json({ error: 'Erro ao excluir missão' });
+    }
+});
+
+// Endpoint para aceitar a missão (mudar status para "Em andamento")
+app.put('/aceitar-missao/:id', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body; // O novo status (deve ser "em andamento")
+
+    if (status !== 'em andamento') {
+        return res.status(400).json({ error: 'Status inválido!' });
+    }
+
+    try {
+        // Atualiza o status da missão no banco de dados
+        const result = await client.query(
+            'UPDATE missoes SET status = $1 WHERE id = $2 RETURNING *',
+            [status, id]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Missão não encontrada!' });
+        }
+
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error('Erro ao atualizar missão:', err);
+        res.status(500).json({ error: 'Erro ao atualizar a missão' });
     }
 });
 
