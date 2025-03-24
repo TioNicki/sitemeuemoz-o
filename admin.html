@@ -26,52 +26,24 @@
         }
 
         /* Menu lateral */
-       /* Menu lateral */
-.sidebar {
-    width: 250px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    position: fixed;
-    left: 0; /* Mudança aqui para garantir que o menu sempre fique visível */
-    top: 0;
-    height: 100vh;
-    transition: left 0.3s ease-in-out;
-}
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100vh;
+            transition: left 0.3s ease-in-out;
+        }
 
-/* Responsividade */
-@media screen and (max-width: 768px) {
-    .sidebar {
-        position: fixed;
-        left: -250px; /* Escondendo o menu lateral no celular */
-        top: 0;
-        width: 250px;
-        height: 100%;
-        z-index: 1000;
-    }
-
-    .hamburger {
-        display: flex;
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
-
-    .sidebar.active {
-        left: 0; /* Menu visível quando a classe 'active' for aplicada */
-    }
-
-    .main-content.active {
-        margin-left: 250px; /* Conteúdo movido para a direita no celular */
-    }
-}
         .sidebar-header {
-            height: 100px;  /* Altere para a altura desejada */
-            margin-bottom: 1px;  /* Distância entre o cabeçalho e o conteúdo do menu */
+            height: 100px;  
+            margin-bottom: 1px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -118,30 +90,28 @@
             z-index: 2000;
         }
 
-        /* Menu hamburguer */
         .hamburger div {
             width: 30px;
             height: 5px;
-            background-color: #2c3e50;  /* Cor inicial */
+            background-color: #2c3e50;
             border-radius: 5px;
-            transition: transform 0.3s, background-color 0.3s; /* Transição suave para a cor também */
+            transition: transform 0.3s, background-color 0.3s;
         }
 
-        /* Quando o menu estiver ativo, a cor do "X" muda */
         .hamburger.change div {
-            background-color: #ffffff;  /* Muda para branco quando o menu estiver aberto */
+            background-color: #ffffff;
         }
 
         .hamburger.change div:nth-child(1) {
-            transform: translateY(10px) rotate(45deg);  /* Primeira linha vira para formar o "X" */
+            transform: translateY(10px) rotate(45deg);
         }
 
         .hamburger.change div:nth-child(2) {
-            opacity: 0;  /* Segunda linha desaparece */
+            opacity: 0;
         }
 
         .hamburger.change div:nth-child(3) {
-            transform: translateY(-10px) rotate(-45deg);  /* Terceira linha vira para formar o "X" */
+            transform: translateY(-10px) rotate(-45deg);
         }
 
         /* Conteúdo principal */
@@ -193,12 +163,12 @@
             background-color: #2980b9;
         }
 
-        #newsList {
+        #newsList, #missionsList {
             list-style-type: none;
             padding: 0;
         }
 
-        #newsList li {
+        #newsList li, #missionsList li {
             background-color: #f0f0f0;
             padding: 15px;
             margin: 10px 0;
@@ -261,7 +231,8 @@
                     <li><a href="paginainicial.html" id="home-link">Ir para Site</a></li>
                     <li><a href="#" id="add-news-link">Adicionar Notícia</a></li>
                     <li><a href="#" id="news-list-link">Lista de Notícias</a></li>
-                    <li><a href="#">Roleta</a></li>                
+                    <li><a href="#" id="add-mission-link">Adicionar Missão</a></li>
+                    <li><a href="#" id="missions-list-link">Lista de Missões</a></li>
                 </ul>
             </nav>
         </aside>
@@ -275,6 +246,7 @@
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
+            <!-- Seção de Notícias -->
             <section id="add-news-section" class="section active">
                 <h1>Adicionar Notícia</h1>
                 <form id="newsForm">
@@ -292,11 +264,33 @@
                 <h1>Lista de Notícias</h1>
                 <ul id="newsList"></ul>
             </section>
+
+            <!-- Seção de Missões -->
+            <section id="add-mission-section" class="section">
+                <h1>Adicionar Missão</h1>
+                <form id="missionForm">
+                    <label for="mission-title">Título</label>
+                    <input type="text" id="mission-title" placeholder="Digite o título da missão" required>
+            
+                    <label for="mission-description">Descrição</label>
+                    <textarea id="mission-description" placeholder="Digite a descrição da missão" rows="5" required></textarea>
+            
+                    <!-- Novo campo para Recompensa -->
+                    <label for="mission-reward">Recompensa</label>
+                    <input type="text" id="mission-reward" placeholder="Digite a recompensa da missão" required>
+            
+                    <button type="submit">Adicionar Missão</button>
+                </form>
+            </section>            
+            <section id="missions-list-section" class="section">
+                <h1>Lista de Missões</h1>
+                <ul id="missionsList"></ul> <!-- Verifique o ID aqui -->
+            </section>            
         </main>
     </div>
 
     <script>
-        // Função para lidar com o envio do formulário
+        // Função para lidar com o envio do formulário de notícias
         document.getElementById('newsForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -320,25 +314,6 @@
                 alert('Erro ao adicionar notícia!');
             });
         });
-
-        // Função para excluir uma notícia
-        function deleteNews(newsId) {
-            fetch(`https://sitemeuemoz-o.onrender.com/delete-news/${newsId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Notícia excluída com sucesso!');
-                updateNewsList();
-            })
-            .catch(error => {
-                console.error('Erro ao excluir notícia:', error);
-                alert('Erro ao excluir notícia!');
-            });
-        }
 
         // Função para atualizar a lista de notícias
         function updateNewsList() {
@@ -365,6 +340,99 @@
                 });
         }
 
+        // Função para excluir uma notícia
+        function deleteNews(newsId) {
+            fetch(`https://sitemeuemoz-o.onrender.com/delete-news/${newsId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Notícia excluída com sucesso!');
+                updateNewsList();
+            })
+            .catch(error => {
+                console.error('Erro ao excluir notícia:', error);
+                alert('Erro ao excluir notícia!');
+            });
+        }
+        // Função para lidar com o envio do formulário de missões
+document.getElementById('missionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const title = document.getElementById('mission-title').value;
+    const description = document.getElementById('mission-description').value;
+    const reward = document.getElementById('mission-reward').value; // Nova variável para a recompensa
+
+    fetch('https://sitemeuemoz-o.onrender.com/add-missao', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            titulo: title,
+            descricao: description,
+            recompensa: reward // Envia a recompensa
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Missão adicionada com sucesso!');
+        updateMissionsList();
+    })
+    .catch(error => {
+        console.error('Erro ao adicionar missão:', error);
+        alert('Erro ao adicionar missão!');
+    });
+});
+
+
+        // Função para atualizar a lista de missões
+        function updateMissionsList() {
+            fetch('https://sitemeuemoz-o.onrender.com/get-missoes')
+                .then(response => response.json())
+                .then(missionsList => {
+                    const missionsListElement = document.getElementById('missionsList');
+                    missionsListElement.innerHTML = '';
+
+                    missionsList.forEach(function(missionItem) {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <strong>${missionItem.titulo}</strong><br>
+                            <p>${missionItem.descricao}</p>
+                            <small>Status: ${missionItem.status}</small>
+                            <button class="delete-button" onclick="deleteMission('${missionItem.id}')">Excluir</button>
+                        `;
+                        missionsListElement.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao obter as missões:', error);
+                    alert('Erro ao carregar as missões!');
+                });
+        }
+
+        // Função para excluir uma missão
+        function deleteMission(missionId) {
+            fetch(`https://sitemeuemoz-o.onrender.com/delete-missao/${missionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Missão excluída com sucesso!');
+                updateMissionsList();
+            })
+            .catch(error => {
+                console.error('Erro ao excluir missão:', error);
+                alert('Erro ao excluir missão!');
+            });
+        }
+
         // Funções para alternar entre as seções
         document.getElementById('add-news-link').addEventListener('click', function() {
             showSection('add-news-section');
@@ -372,6 +440,14 @@
 
         document.getElementById('news-list-link').addEventListener('click', function() {
             showSection('news-list-section');
+        });
+
+        document.getElementById('add-mission-link').addEventListener('click', function() {
+            showSection('add-mission-section');
+        });
+
+        document.getElementById('missions-list-link').addEventListener('click', function() {
+            showSection('missions-list-section');
         });
 
         function showSection(sectionId) {
@@ -400,8 +476,11 @@
             }
         });
 
-        // Atualiza a lista de notícias ao carregar
-        window.onload = updateNewsList;
+        // Atualiza as listas ao carregar
+        window.onload = () => {
+            updateNewsList();
+            updateMissionsList();
+        };
     </script>
 
 </body>
