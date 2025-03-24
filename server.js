@@ -17,8 +17,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
 // Middleware para permitir conexões
 app.use((req, res, next) => {
     res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' https://sitemeuemoz-o.onrender.com/salvar-roleta;");
@@ -34,8 +32,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Configuração do PostgreSQL
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; style-src 'self' https://www.gstatic.com;");
+    next();
+});
 
+// Configuração do PostgreSQL
 const client = new Client({
     connectionString: 'postgresql://postgres:HfHwmSznI0eeFFLs@perceptibly-planetary-catbird.data-1.use1.tembo.io:5432/postgres',
     ssl: { rejectUnauthorized: false },
@@ -51,34 +53,13 @@ client.connect()
         console.error('Erro ao conectar:', err);
     });
 
-    app.post("/salvar-roleta", async (req, res) => {
+    app.get('/missoes', async (req, res) => {
         try {
-            console.log("Dados recebidos:", req.body);
-    
-            const { premios } = req.body;
-            console.log("Premios recebidos:", premios); // Verificando o formato dos dados recebidos
-    
-            if (!premios || !Array.isArray(premios)) {
-                return res.status(400).json({ error: "Formato inválido. O campo 'premios' deve ser um array." });
-            }
-    
-            // Log antes da inserção
-            console.log("Inserindo resultados na tabela 'roleta_resultados'...");
-    
-            // Iterando sobre os resultados e fazendo a inserção no banco de dados
-            for (const premio of premios) {
-                const item_sorteado = premio.item;  // A variável correta com o nome do prêmio
-                const data_sorteio = new Date().toISOString();  // Data no formato ISO 8601
-    
-                console.log(`Inserindo item: ${item_sorteado}, Data: ${data_sorteio}`);
-                
-                await pool.query('INSERT INTO roleta_resultados (item_sorteado, data_sorteio) VALUES ($1, $2) RETURNING *', [item_sorteado, data_sorteio]);
-            }
-    
-            res.json({ success: true, message: "Resultados salvos com sucesso!" });
-        } catch (error) {
-            console.error("Erro ao salvar:", error); // Capturando detalhes do erro
-            res.status(500).json({ error: "Erro no servidor." });
+            const result = await client.query('SELECT * FROM missoes');
+            res.json(result.rows);
+        } catch (err) {
+            console.error('Erro ao buscar missões', err);
+            res.status(500).send('Erro ao buscar missões');
         }
     });
     
