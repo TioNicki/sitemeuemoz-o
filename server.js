@@ -56,25 +56,26 @@ client.connect()
     });
 
     // Rota para adicionar uma missão
-app.post('/add-missao', async (req, res) => {
-    const { titulo, descricao, recompensa } = req.body;
-
-    if (!titulo || !descricao || !recompensa) {
-        return res.status(400).json({ error: 'Título, descrição e recompensa são obrigatórios!' });
-    }
-
-    try {
-        const result = await client.query(
-            'INSERT INTO missoes (titulo, descricao, recompensa) VALUES ($1, $2, $3) RETURNING *',
-            [titulo, descricao, recompensa]
-        );
-        res.status(201).json(result.rows[0]); // Retorna a missão adicionada
-    } catch (err) {
-        console.error('Erro ao adicionar missão:', err);
-        res.status(500).json({ error: 'Erro ao adicionar a missão' });
-    }
-});
-
+    app.post('/add-missao', async (req, res) => {
+        const { titulo, descricao, recompensa } = req.body;
+    
+        if (!titulo || !descricao || !recompensa) {
+            return res.status(400).json({ error: 'Título, descrição e recompensa são obrigatórios!' });
+        }
+    
+        try {
+            // Defina o status como 'disponível' por padrão
+            const result = await client.query(
+                'INSERT INTO missoes (titulo, descricao, recompensa, status) VALUES ($1, $2, $3, $4) RETURNING *',
+                [titulo, descricao, recompensa, 'disponível']  // Aqui está o valor 'disponível'
+            );
+            res.status(201).json(result.rows[0]); // Retorna a missão adicionada
+        } catch (err) {
+            console.error('Erro ao adicionar missão:', err);
+            res.status(500).json({ error: 'Erro ao adicionar a missão' });
+        }
+    });
+    
 // Rota para recuperar todas as missões
 app.get('/get-missoes', async (req, res) => {
     try {
