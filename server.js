@@ -6,13 +6,14 @@ const port = 3000;
 
 
 const corsOptions = {
-    origin: 'https://meuam0r.netlify.app', // Defina a origem exata
-    methods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
+    origin: ['http://192.168.18.26:5500', 'https://meuam0r.netlify.app'], // Adicione as origens necessárias
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 
 app.use(cors(corsOptions));
+
 app.use((req, res, next) => {
     res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src *;");
     next();
@@ -20,7 +21,7 @@ app.use((req, res, next) => {
 
 // Middleware para permitir conexões
 app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' https://sitemeuemoz-o.onrender.com/salvar-roleta;");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' https://sitemeuemoz-o.onrender.com/;");
     next();
 });
 
@@ -53,6 +54,81 @@ client.connect()
     .catch(err => {
         console.error('Erro ao conectar:', err);
     });
+
+    // Rota para adicionar uma missão
+app.post('/add-missao', async (req, res) => {
+    const { titulo, descricao, status } = req.body;
+
+    if (!titulo || !descricao || !status) {
+        return res.status(400).json({ error: 'Título, descrição e status são obrigatórios!' });
+    }
+
+    try {
+        const result = await client.query(
+            'INSERT INTO missoes (titulo, descricao, status) VALUES ($1, $2, $3) RETURNING *',
+            [titulo, descricao, status]
+        );
+        res.status(201).json(result.rows[0]); // Retorna a missão adicionada
+    } catch (err) {
+        console.error('Erro ao adicionar missão:', err);
+        res.status(500).json({ error: 'Erro ao adicionar a missão' });
+    }
+});
+
+// Rota para recuperar todas as missões
+app.get('/get-missoes', async (req, res) => {
+    try {
+        const result = await client.query('SELECT * FROM missoes ORDER BY id ASC');
+        res.status(200).json(result.rows); // Retorna todas as missões
+    } catch (err) {
+        console.error('Erro ao obter missões:', err);
+        res.status(500).json({ error: 'Erro ao obter missões' });
+    }
+});
+
+// Rota para atualizar o status de uma missão
+app.put('/update-missao/:id', async (req, res) => {
+    const missionId = req.params.id;
+    const { titulo, descricao, status } = req.body;
+
+    try {
+        const result = await client.query(
+            'UPDATE missoes SET titulo = $1, descricao = $2, status = $3 WHERE id = $4 RETURNING *',
+            [titulo, descricao, status, missionId]
+        );
+
+        if (result.rowCount > 0) {
+            res.status(200).json(result.rows[0]); // Retorna a missão atualizada
+        } else {
+            res.status(404).json({ message: 'Missão não encontrada' });
+        }
+    } catch (err) {
+        console.error('Erro ao atualizar missão:', err);
+        res.status(500).json({ error: 'Erro ao atualizar missão' });
+    }
+});
+
+// Rota para excluir uma missão
+app.delete('/delete-missao/:id', async (req, res) => {
+    const missionId = req.params.id;
+
+    try {
+        const result = await client.query(
+            'DELETE FROM missoes WHERE id = $1 RETURNING *',
+            [missionId]
+        );
+
+        if (result.rowCount > 0) {
+            res.status(200).json({ message: 'Missão excluída com sucesso!' });
+        } else {
+            res.status(404).json({ message: 'Missão não encontrada' });
+        }
+    } catch (err) {
+        console.error('Erro ao excluir missão:', err);
+        res.status(500).json({ error: 'Erro ao excluir missão' });
+    }
+});
+
 // Rota para adicionar uma notícia
 app.post('/add-news', async (req, res) => {
     const { titulo, conteudo } = req.body;
