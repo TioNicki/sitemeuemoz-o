@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Missões</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #2d3a4b;
+            color: white;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .section h2 {
+            color: #2d3a4b;
+            margin: 0;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        li {
+            background-color: #e0e0e0;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .missao-titulo {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .missao-descricao {
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .missao-recompensa {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2d3a4b;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button.aceitar-missao {
+    background-color: #4CAF50; /* Cor de fundo verde */
+    color: white; /* Texto branco */
+    font-size: 16px; /* Tamanho da fonte */
+    padding: 10px 20px; /* Espaçamento interno */
+    border: none; /* Sem borda */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Cursor de ponteiro */
+    transition: background-color 0.3s ease; /* Transição suave na cor de fundo */
+    display: block; /* Faz com que o botão ocupe toda a linha */
+    margin: 20px auto; /* Centraliza o botão */
+    width: 200px; /* Largura fixa do botão */
+}
+
+button.aceitar-missao:hover {
+    background-color: #45a049; /* Cor de fundo mais escura no hover */
+}
+
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            header {
+                padding: 15px;
+            }
+
+            .section h2 {
+                font-size: 1.1em;
+            }
+
+            li {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .missao-titulo {
+                font-size: 1em;
+            }
+
+            .missao-descricao {
+                font-size: 0.9em;
+            }
+
+            .missao-recompensa {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 10px;
+            }
+
+            .section h2 {
+                font-size: 1em;
+                padding: 8px;
+            }
+
+            li {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+
+            .missao-titulo {
+                font-size: 0.9em;
+            }
+
+            .missao-descricao {
+                font-size: 0.8em;
+            }
+
+            .missao-recompensa {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Missões</h1>
+        </header>
+        <main>
+            <div class="section" id="missao-em-andamento">
+                <h2 onclick="toggleSection('lista-missoes-andamento')">Missões em Andamento</h2>
+                <ul id="lista-missoes-andamento"></ul>
+            </div>
+            <div class="section" id="missao-disponivel">
+                <h2 onclick="toggleSection('lista-missoes-disponiveis')">Missões Disponíveis</h2>
+                <ul id="lista-missoes-disponiveis"></ul>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // URL do backend (ajuste conforme necessário)
+        const API_URL = 'https://sitemeuemoz-o.onrender.com/get-missoes'; // Adicione "/missoes"
+    
+        // Função para buscar as missões do banco de dados
+        async function buscarMissoes() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar missões");
+                }
+                const missoes = await response.json();
+
+                // Separa as missões em andamento e disponíveis
+                const missaoEmAndamento = missoes.filter(m => m.status === "em andamento");
+                const missaoDisponivel = missoes.filter(m => m.status === "disponível");
+
+                // Exibe as missões em andamento
+                renderizarMissoes("lista-missoes-andamento", missaoEmAndamento);
+
+                // Exibe as missões disponíveis
+                renderizarMissoes("lista-missoes-disponiveis", missaoDisponivel);
+            } catch (error) {
+                console.error("Erro ao buscar missões:", error);
+            }
+        }
+
+        // Função para renderizar missões na tela
+function renderizarMissoes(elementId, missoes) {
+    const lista = document.getElementById(elementId);
+    lista.innerHTML = missoes.map(missao => {
+        return `
+            <li>
+                <div class="missao-titulo">${missao.titulo}</div>
+                <div class="missao-descricao">${missao.descricao}</div>
+                <div class="missao-recompensa">Recompensa: ${missao.recompensa}</div>
+                ${missao.status === "disponível" ? `<button class="aceitar-missao" onclick="aceitarMissao(${missao.id})">Aceitar Missão</button>` : ''}
+            </li>
+        `;
+    }).join("");
+}
+
+        // Função para aceitar a missão e mudar seu status para "Em andamento"
+        async function aceitarMissao(idMissao) {
+        try {
+        // Envia a requisição para atualizar o status da missão para "Em andamento"
+        const response = await fetch(`https://sitemeuemoz-o.onrender.com/aceitar-missao/${idMissao}`, {
+            method: 'PUT', // Método PUT para atualizar a missão
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'em andamento' // Novo status para a missão
+            })
+        });
+
+        if (response.ok) {
+            alert('Missão aceita!'); // Confirmação para o usuário
+            buscarMissoes(); // Atualiza a lista de missões
+        } else {
+            throw new Error('Erro ao aceitar missão');
+        }
+    } catch (error) {
+        console.error('Erro ao aceitar missão:', error);
+    }
+}
+
+        // Função para alternar a visibilidade das missões
+        function toggleSection(listId) {
+            const lista = document.getElementById(listId);
+            lista.classList.toggle("hidden");
+        }
+
+        // Chama a função para carregar as missões ao carregar a página
+        window.onload = buscarMissoes;
+    </script>
+</body>
+</html>
