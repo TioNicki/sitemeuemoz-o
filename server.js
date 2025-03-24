@@ -6,10 +6,11 @@ const port = 3000;
 
 
 const corsOptions = {
-    origin: '*',  // Apenas seu frontend local
+    origin: 'https://meuam0r.netlify.app', // Defina a origem exata
     methods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 
 app.use(cors(corsOptions));
 app.use((req, res, next) => {
