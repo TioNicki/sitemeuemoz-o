@@ -76,6 +76,23 @@
             color: #3498db;
         }
 
+        /* Submenu */
+.sidebar-nav ul ul {
+    display: none; /* Inicialmente oculto */
+    padding-left: 20px; /* Indentação para parecer uma subpasta */
+    transition: display 0.3s ease;
+}
+
+.sidebar-nav ul li a {
+    cursor: pointer; /* Mudando o cursor para indicar que é clicável */
+}
+
+/* Mostrar sub-menu ao clicar */
+.sidebar-nav ul li.active > ul {
+    display: block; /* Exibe o submenu quando o item principal estiver ativo */
+}
+
+
         /* Menu hamburguer */
         .hamburger {
             display: none;
@@ -228,13 +245,21 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="paginainicial.html" id="home-link">Ir para Site</a></li>
-                    <li><a href="#" id="add-news-link">Adicionar Notícia</a></li>
-                    <li><a href="#" id="news-list-link">Lista de Notícias</a></li>
-                    <li><a href="#" id="add-mission-link">Adicionar Missão</a></li>
-                    <li><a href="#" id="missions-list-link">Lista de Missões</a></li>
+                    <li><a href="#" id="home-link" onclick="showSection('home-section')">Ir para Site</a></li>
+                    <li><a href="#" id="manage-news-link" onclick="toggleSubMenu('news-submenu')">Gerenciar Notícias</a>
+                        <ul id="news-submenu" style="display: none;">
+                            <li><a href="#" id="add-news-link" onclick="showSection('add-news-section')">Adicionar Notícia</a></li>
+                            <li><a href="#" id="news-list-link" onclick="showSection('news-list-section')">Lista de Notícias</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" id="manage-missions-link" onclick="toggleSubMenu('missions-submenu')">Gerenciar Missões</a>
+                        <ul id="missions-submenu" style="display: none;">
+                            <li><a href="#" id="add-mission-link" onclick="showSection('add-mission-section')">Adicionar Missão</a></li>
+                            <li><a href="#" id="missions-list-link" onclick="showSection('missions-list-section')">Lista de Missões</a></li>
+                        </ul>
+                    </li>
                 </ul>
-            </nav>
+            </nav>                      
         </aside>
 
         <!-- Menu Hamburguer -->
@@ -273,19 +298,20 @@
                     <input type="text" id="mission-title" placeholder="Digite o título da missão" required>
             
                     <label for="mission-description">Descrição</label>
-                    <textarea id="mission-description" placeholder="Digite a descrição da missão" rows="5" required></textarea>
+                    <textarea id="mission-description" placeholder="Digite a descrição da missão" rows="5" required>
+                    </textarea>
             
-                    <!-- Novo campo para Recompensa -->
                     <label for="mission-reward">Recompensa</label>
                     <input type="text" id="mission-reward" placeholder="Digite a recompensa da missão" required>
             
                     <button type="submit">Adicionar Missão</button>
                 </form>
-            </section>            
+            </section>
+
             <section id="missions-list-section" class="section">
                 <h1>Lista de Missões</h1>
                 <ul id="missionsList"></ul> <!-- Verifique o ID aqui -->
-            </section>            
+            </section>
         </main>
     </div>
 
@@ -433,28 +459,40 @@ document.getElementById('missionForm').addEventListener('submit', function(e) {
             });
         }
 
-        // Funções para alternar entre as seções
-        document.getElementById('add-news-link').addEventListener('click', function() {
-            showSection('add-news-section');
+                // Funções para alternar entre as seções
+                document.getElementById('manage-news-link').addEventListener('click', function() {
+            toggleSubMenu('news-submenu');
         });
 
-        document.getElementById('news-list-link').addEventListener('click', function() {
-            showSection('news-list-section');
+        document.getElementById('manage-missions-link').addEventListener('click', function() {
+            toggleSubMenu('missions-submenu');
         });
 
-        document.getElementById('add-mission-link').addEventListener('click', function() {
-            showSection('add-mission-section');
-        });
+        // Função para alternar os submenus
+function toggleSubMenu(menuId) {
+    const submenu = document.getElementById(menuId);
+    const parentLi = submenu.parentElement; // Para saber qual item principal (pasta) foi clicado
 
-        document.getElementById('missions-list-link').addEventListener('click', function() {
-            showSection('missions-list-section');
-        });
+    // Alternar a classe 'active' no item principal
+    parentLi.classList.toggle('active');
 
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-        }
+    // Alternar visibilidade do submenu
+    if (submenu.style.display === '' || submenu.style.display === 'none') {
+        submenu.style.display = 'block';
+    } else {
+        submenu.style.display = 'none';
+    }
+}
+
+// Eventos de clique para "Gerenciar Notícias" e "Gerenciar Missões"
+document.getElementById('manage-news-link').addEventListener('click', function() {
+    toggleSubMenu('news-submenu');
+});
+
+document.getElementById('manage-missions-link').addEventListener('click', function() {
+    toggleSubMenu('missions-submenu');
+});
+
 
         // Alternar visibilidade do menu lateral no celular
         const hamburger = document.getElementById('hamburger');
@@ -481,7 +519,12 @@ document.getElementById('missionForm').addEventListener('submit', function(e) {
             updateNewsList();
             updateMissionsList();
         };
+        // Mostra ou esconde as seções de notícias e missões
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
     </script>
-
 </body>
 </html>
