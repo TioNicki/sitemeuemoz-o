@@ -13,9 +13,10 @@
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
+            background-color: #ffccff;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
         }
 
         .container {
@@ -28,8 +29,9 @@
         header {
             text-align: center;
             padding: 20px;
-            background-color: #2d3a4b;
+            background-color: #cc3786;
             color: white;
+            border-radius: 8px;
         }
 
         h1 {
@@ -42,24 +44,25 @@
             gap: 20px;
             width: 100%;
         }
-
         .section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px #cc3786;
+    width: 100%;
+    margin-top: 10%; /* <-- Essa linha move a seção mais para baixo */
+}
 
-        .section h2 {
-            color: #2d3a4b;
-            margin: 0;
-            cursor: pointer;
-            padding: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            text-align: center;
-        }
+.section h2 {
+    color: #2d3a4b;
+    margin: 0;
+    cursor: pointer;
+    padding: 10px;
+    background-color: #ff85c7;
+    border-radius: 5px;
+    text-align: center;
+}
+
 
         ul {
             list-style-type: none;
@@ -68,7 +71,7 @@
         }
 
         li {
-            background-color: #e0e0e0;
+            background-color: #ffb6dd;
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 5px;
@@ -174,9 +177,76 @@ button.aceitar-missao:hover {
                 font-size: 0.8em;
             }
         }
+
+        .menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #ff73bf;
+    overflow-x: hidden;
+    transition: width 0.5s;
+    padding-top: 60px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0 10px 10px 0;
+}
+
+.menu.expanded {
+    width: 250px;
+}
+
+.menu a {
+    padding: 15px 8px 15px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+
+.menu a:hover {
+    color: #f1f1f1;
+}
+
+.pull-arrow {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    font-size: 30px;
+    cursor: pointer;
+    background-color: #ff73bf;
+    color: #fff;
+    padding: 10px;
+    border-radius: 0 10px 10px 0;
+    border: transparent;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: left 0.5s;
+}
+
+.menu.expanded + .pull-arrow {
+    left: 250px;
+}
     </style>
 </head>
 <body>
+
+    <div id="menu" class="menu">
+        <a href="paginainicial.html">Painel de Notícias</a>
+        <a href="cronometro.html">Cronômetro</a>
+        <a href="missoes.html">Missões</a>
+        <a href="roleta.html">Sorte do Amor</a>
+    </div>
+
+    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
+
     <div class="container">
         <header>
             <h1>Missões</h1>
@@ -268,6 +338,20 @@ function renderizarMissoes(elementId, missoes) {
 
         // Chama a função para carregar as missões ao carregar a página
         window.onload = buscarMissoes;
+
+        function toggleMenu() {
+    const menu = document.getElementById("menu");
+    const button = document.getElementById("pullArrow");
+    if (menu.classList.contains("expanded")) {
+        menu.classList.remove("expanded");
+        button.innerHTML = "&#x3e;";
+        button.style.left = "0";
+    } else {
+        menu.classList.add("expanded");
+        button.innerHTML = "&#x3c;";
+        button.style.left = "250px";
+    }
+}
     </script>
 </body>
 </html>
