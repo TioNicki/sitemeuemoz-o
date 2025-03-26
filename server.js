@@ -79,15 +79,14 @@ client.connect()
 // Rota para recuperar todas as missões
 app.get('/get-missoes', async (req, res) => {
     try {
-        // Alteração aqui para incluir a recompensa na consulta
-        const result = await client.query('SELECT id, titulo, descricao, status, recompensa FROM missoes ORDER BY id ASC');
-        res.status(200).json(result.rows); // Retorna todas as missões com recompensa
+        // Incluímos `hora_publicada` na consulta SQL
+        const result = await client.query('SELECT id, titulo, descricao, status, recompensa, hora_publicada FROM missoes ORDER BY id ASC');
+        res.status(200).json(result.rows);
     } catch (err) {
         console.error('Erro ao obter missões:', err);
         res.status(500).json({ error: 'Erro ao obter missões' });
     }
 });
-
 // Rota para atualizar o status de uma missão
 app.put('/update-missao/:id', async (req, res) => {
     const missionId = req.params.id;
@@ -131,32 +130,6 @@ app.delete('/delete-missao/:id', async (req, res) => {
     }
 });
 
-// Endpoint para aceitar a missão (mudar status para "Em andamento")
-app.put('/aceitar-missao/:id', async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body; // O novo status (deve ser "em andamento")
-
-    if (status !== 'em andamento') {
-        return res.status(400).json({ error: 'Status inválido!' });
-    }
-
-    try {
-        // Atualiza o status da missão no banco de dados
-        const result = await client.query(
-            'UPDATE missoes SET status = $1 WHERE id = $2 RETURNING *',
-            [status, id]
-        );
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: 'Missão não encontrada!' });
-        }
-
-        res.status(200).json(result.rows[0]);
-    } catch (err) {
-        console.error('Erro ao atualizar missão:', err);
-        res.status(500).json({ error: 'Erro ao atualizar a missão' });
-    }
-});
 
 // Rota para adicionar uma notícia
 app.post('/add-news', async (req, res) => {
