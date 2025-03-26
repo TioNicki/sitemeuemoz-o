@@ -62,6 +62,7 @@ h1 {
     font-size: 1.1em;
     color: #555;
     line-height: 1.6;
+    white-space: pre-line; /* Preserva quebras de linha e espaços */
 }
 
 /* Estilo da data da notícia */
@@ -71,9 +72,6 @@ h1 {
     margin-top: 10px;
     display: block;
 }
-
-/* Estilos responsivos para telas menores */
-
 /* Para telas de tamanho médio (tablet) */
 @media (max-width: 768px) {
     h1 {
@@ -219,9 +217,10 @@ function loadNews() {
                 title.className = 'news-title';
                 title.textContent = item.titulo;
 
-                const content = document.createElement('p');
+                // Aqui a mudança: ao invés de usar .textContent, use .innerHTML
+                const content = document.createElement('div');
                 content.className = 'news-content';
-                content.textContent = item.conteudo;
+                content.innerHTML = item.conteudo; // Permite que HTML seja interpretado
 
                 const date = document.createElement('span');
                 date.className = 'news-date';
@@ -233,9 +232,7 @@ function loadNews() {
                 newsContainer.appendChild(newsElement);
             });
         })
-        .catch(error => {
-            console.error('Erro ao carregar as notícias:', error);
-        });
+        .catch(error => console.error('Erro ao carregar notícias:', error));
 }
 
 // Carregar notícias quando o conteúdo da página estiver carregado
