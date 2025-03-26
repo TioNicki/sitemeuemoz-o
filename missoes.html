@@ -291,13 +291,13 @@ button.aceitar-missao:hover {
         }
 
         // Função para renderizar missões na tela
-function renderizarMissoes(elementId, missoes) {
+        function renderizarMissoes(elementId, missoes) {
     const lista = document.getElementById(elementId);
     lista.innerHTML = missoes.map(missao => {
         return `
             <li>
                 <div class="missao-titulo">${missao.titulo}</div>
-                <div class="missao-descricao">${missao.descricao}</div>
+                <div class="missao-descricao" style="white-space: pre-line;">${missao.descricao}</div>
                 <div class="missao-recompensa">Recompensa: ${missao.recompensa}</div>
                 ${missao.status === "disponível" ? `<button class="aceitar-missao" onclick="aceitarMissao(${missao.id})">Aceitar Missão</button>` : ''}
             </li>
