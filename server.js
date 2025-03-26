@@ -98,7 +98,26 @@ app.get('/get-missoes', async (req, res) => {
         res.status(500).json({ error: 'Erro ao obter missões' });
     }
 });
+app.put('/aceitar-missao/:id', async (req, res) => {
+    const missionId = req.params.id;
+    const horaAceita = new Date().toISOString(); // Salva no formato UTC
 
+    try {
+        const result = await client.query(
+            'UPDATE missoes SET status = $1, hora_aceita = $2 WHERE id = $3 RETURNING *',
+            ['Aceita', horaAceita, missionId]
+        );
+
+        if (result.rowCount > 0) {
+            res.status(200).json(result.rows[0]);
+        } else {
+            res.status(404).json({ message: 'Missão não encontrada' });
+        }
+    } catch (err) {
+        console.error('Erro ao aceitar missão:', err);
+        res.status(500).json({ error: 'Erro ao aceitar missão' });
+    }
+});
 // Rota para atualizar o status de uma missão
 app.put('/update-missao/:id', async (req, res) => {
     const missionId = req.params.id;
