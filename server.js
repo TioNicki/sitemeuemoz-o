@@ -227,6 +227,16 @@ app.post('/salvar-roleta', async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar resultado no banco de dados' });
     }
 });
+app.get('/sorteio', async (req, res) => {
+    try {
+      // Consulta os resultados da roleta
+      const result = await client.query('SELECT item_sorteado, data_sorteio FROM roleta_resultados ORDER BY data_sorteio DESC LIMIT 10');
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Erro ao consultar os resultados:', err);
+      res.status(500).json({ error: 'Erro ao consultar os resultados' });
+    }
+  });
 // Iniciar o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
