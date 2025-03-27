@@ -105,7 +105,7 @@ app.put('/aceitar-missao/:id', async (req, res) => {
     try {
         const result = await client.query(
             'UPDATE missoes SET status = $1, hora_aceita = $2 WHERE id = $3 RETURNING *',
-            ['Aceita', horaAceita, missionId]
+            ['em andamento', horaAceita, missionId]
         );
 
         if (result.rowCount > 0) {
