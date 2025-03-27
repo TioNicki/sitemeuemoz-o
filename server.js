@@ -210,6 +210,23 @@ app.delete('/delete-news/:id', async (req, res) => {
         res.status(500).json({ message: 'Erro ao excluir notícia' });
     }
 });
+// Rota para salvar o resultado de um giro na roleta
+app.post('/salvar-roleta', async (req, res) => {
+    const { item_sorteado } = req.body;
+    
+    if (!item_sorteado) {
+        return res.status(400).json({ error: 'O item sorteado é obrigatório' });
+    }
+
+    try {
+        const query = 'INSERT INTO roleta (item_sorteado, data_sorteio) VALUES ($1, NOW())';
+        await pool.query(query, [item_sorteado]);
+        res.json({ success: true, message: 'Resultado salvo com sucesso' });
+    } catch (error) {
+        console.error('Erro ao salvar o resultado da roleta:', error);
+        res.status(500).json({ error: 'Erro ao salvar resultado no banco de dados' });
+    }
+});
 // Iniciar o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
