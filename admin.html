@@ -205,6 +205,63 @@
         .delete-button:hover {
             background-color: #d40000;
         }
+/* Adiciona uma "caixa" para cada missão */
+#missionsInProgressList li,
+#missionsAvailableList li {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    position: relative; /* Para permitir o posicionamento do botão dentro */
+    min-height: 100px; /* Aumenta a altura mínima da caixa */
+    padding-bottom: 40px; /* Adiciona espaço na parte inferior para o botão */
+}
+
+/* Ajusta a posição do botão de excluir dentro da caixa */
+.delete-button {
+    position: absolute;
+    bottom: 10px; /* Fixa o botão 10px do fundo */
+    right: 10px;  /* Alinha o botão à direita */
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-button:hover {
+    background-color: #d40000;
+}
+
+/* Adiciona uma "caixa" para cada notícia */
+#newsList li {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    position: relative; /* Para permitir o posicionamento do botão dentro */
+    min-height: 100px; /* Aumenta a altura mínima da caixa */
+    padding-bottom: 40px; /* Adiciona espaço na parte inferior para o botão */
+}
+
+/* Ajusta a posição do botão de excluir dentro da caixa */
+.delete-button {
+    position: absolute;
+    bottom: 10px; /* Fixa o botão 10px do fundo */
+    right: 10px;  /* Alinha o botão à direita */
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-button:hover {
+    background-color: #d40000;
+}
+
 
         /* Responsividade */
         @media screen and (max-width: 768px) {
@@ -245,7 +302,7 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="#" id="home-link" onclick="showSection('home-section')">Ir para Site</a></li>
+                    <li><a href="#" id="home-link" onclick="window.location.href='paginainicial.html'; return false;">Ir para Site</a></li>
                     <li><a href="#" id="manage-news-link" onclick="toggleSubMenu('news-submenu')">Gerenciar Notícias</a>
                         <ul id="news-submenu" style="display: none;">
                             <li><a href="#" id="add-news-link" onclick="showSection('add-news-section')">Adicionar Notícia</a></li>
@@ -287,8 +344,15 @@
 
             <section id="news-list-section" class="section">
                 <h1>Lista de Notícias</h1>
-                <ul id="newsList"></ul>
-            </section>
+                <ul id="newsList">
+                    <!-- Exemplo de item na lista -->
+                    <li>
+                        <h2>Título da Notícia</h2>
+                        <p>Conteúdo da notícia...</p>
+                        <button class="delete-button">Excluir</button>
+                    </li>
+                </ul>
+            </section>            
 
             <!-- Seção de Missões -->
             <section id="add-mission-section" class="section">
@@ -310,8 +374,13 @@
 
             <section id="missions-list-section" class="section">
                 <h1>Lista de Missões</h1>
-                <ul id="missionsList"></ul> <!-- Verifique o ID aqui -->
-            </section>
+            
+                <h2>Missões em Andamento</h2>
+                <ul id="missionsInProgressList"></ul> <!-- Lista de missões em andamento -->
+            
+                <h2>Missões Disponíveis</h2>
+                <ul id="missionsAvailableList"></ul> <!-- Lista de missões disponíveis -->
+            </section>            
         </main>
     </div>
 
@@ -413,33 +482,48 @@ document.getElementById('missionForm').addEventListener('submit', function(e) {
         alert('Erro ao adicionar missão!');
     });
 });
+// Função para atualizar a lista de missões
+function updateMissionsList() {
+    fetch('https://sitemeuemoz-o.onrender.com/get-missoes')
+        .then(response => response.json())
+        .then(missionsList => {
+            const missionsInProgressList = document.getElementById('missionsInProgressList');
+            const missionsAvailableList = document.getElementById('missionsAvailableList');
 
+            // Limpa as listas antes de adicionar novas missões
+            missionsInProgressList.innerHTML = '';
+            missionsAvailableList.innerHTML = '';
 
-        // Função para atualizar a lista de missões
-        function updateMissionsList() {
-            fetch('https://sitemeuemoz-o.onrender.com/get-missoes')
-                .then(response => response.json())
-                .then(missionsList => {
-                    const missionsListElement = document.getElementById('missionsList');
-                    missionsListElement.innerHTML = '';
+            missionsList.forEach(function(missionItem) {
+                const li = document.createElement('li');
+                
+                // Formata a data de publicação e aceitação, se disponível
+                const horaPublicada = missionItem.hora_publicada 
+                    ? new Date(missionItem.hora_publicada).toLocaleString('pt-BR')
+                    : 'Não definida';
+                const horaAceita = missionItem.hora_aceita 
+                    ? new Date(missionItem.hora_aceita).toLocaleString('pt-BR')
+                    : 'Não definida';
 
-                    missionsList.forEach(function(missionItem) {
-                        const li = document.createElement('li');
-                        li.innerHTML = `
-                            <strong>${missionItem.titulo}</strong><br>
-                            <p>${missionItem.descricao}</p>
-                            <small>Status: ${missionItem.status}</small>
-                            <button class="delete-button" onclick="deleteMission('${missionItem.id}')">Excluir</button>
-                        `;
-                        missionsListElement.appendChild(li);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao obter as missões:', error);
-                    alert('Erro ao carregar as missões!');
-                });
-        }
+                li.innerHTML = `
+                    <strong>${missionItem.titulo}</strong><br>
+                    <p>${missionItem.descricao}</p>
+                    <small>Status: ${missionItem.status}</small><br>
+                    <small>Hora Publicada: ${horaPublicada}</small><br>
+                    <small>Hora Aceita: ${horaAceita}</small><br>
+                    <button class="delete-button" onclick="deleteMission('${missionItem.id}')">Excluir</button>
+                `;
 
+                // Adiciona à lista correspondente com base no status
+                if (missionItem.status.toLowerCase() === 'em andamento') {
+                    missionsInProgressList.appendChild(li);
+                } else if (missionItem.status.toLowerCase() === 'disponível') {
+                    missionsAvailableList.appendChild(li);
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao atualizar a lista de missões:', error));
+}
         // Função para excluir uma missão
         function deleteMission(missionId) {
             fetch(`https://sitemeuemoz-o.onrender.com/delete-missao/${missionId}`, {
