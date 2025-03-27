@@ -75,27 +75,16 @@ client.connect()
             res.status(500).json({ error: 'Erro ao adicionar a missão' });
         }
     });
-
 // Rota para recuperar todas as missões
 app.get('/get-missoes', async (req, res) => {
     try {
-        // Ajustamos `hora_publicada` para GMT-3 usando AT TIME ZONE
-        const result = await client.query(`
-            SELECT 
-                id, 
-                titulo, 
-                descricao, 
-                status, 
-                recompensa, 
-                hora_publicada AT TIME ZONE 'UTC' AT TIME ZONE 'America/Sao_Paulo' AS hora_publicada
-            FROM missoes 
-            ORDER BY id ASC
-        `);
+        const result = await client.query('SELECT id, titulo, descricao, status, hora_publicada, hora_aceita FROM missoes');
         
+        console.log(result.rows); // Verifique o que está sendo retornado
         res.status(200).json(result.rows);
     } catch (err) {
-        console.error('Erro ao obter missões:', err);
-        res.status(500).json({ error: 'Erro ao obter missões' });
+        console.error('Erro ao buscar missões:', err);
+        res.status(500).json({ error: 'Erro ao buscar missões' });
     }
 });
 app.put('/aceitar-missao/:id', async (req, res) => {
@@ -128,14 +117,15 @@ app.put('/update-missao/:id', async (req, res) => {
             UPDATE missoes 
             SET titulo = $1, descricao = $2, status = $3
         `;
-        let values = [titulo, descricao, status, missionId];
+        let values = [titulo, descricao, status];
 
         // Se a missão for aceita, salvar a hora_aceita
         if (status.toLowerCase() === 'aceita') {
             query += `, hora_aceita = NOW() AT TIME ZONE 'UTC'`;
         }
 
-        query += ` WHERE id = $4 RETURNING *`;
+        query += ` WHERE id = $${values.length + 1} RETURNING *`;
+        values.push(missionId);
 
         const result = await client.query(query, values);
 
@@ -149,8 +139,6 @@ app.put('/update-missao/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar missão' });
     }
 });
-
-
 // Rota para excluir uma missão
 app.delete('/delete-missao/:id', async (req, res) => {
     const missionId = req.params.id;
