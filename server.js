@@ -220,7 +220,7 @@ app.post('/salvar-roleta', async (req, res) => {
     }
 
     try {
-        const query = 'INSERT INTO resultado_roleta (item_sorteado, data_sorteio) VALUES ($1, NOW())';
+        const query = 'INSERT INTO roleta_resultados (item_sorteado, data_sorteio) VALUES ($1, NOW())';
         await client.query(query, [item_sorteado]); // Usando 'client' em vez de 'pool'
         res.json({ success: true, message: 'Resultado salvo com sucesso' });
     } catch (error) {
