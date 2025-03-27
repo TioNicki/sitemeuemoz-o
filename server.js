@@ -210,6 +210,7 @@ app.delete('/delete-news/:id', async (req, res) => {
         res.status(500).json({ message: 'Erro ao excluir notícia' });
     }
 });
+
 // Rota para salvar o resultado de um giro na roleta
 app.post('/salvar-roleta', async (req, res) => {
     const { item_sorteado } = req.body;
@@ -219,7 +220,7 @@ app.post('/salvar-roleta', async (req, res) => {
     }
 
     try {
-        const query = 'INSERT INTO roleta_resultados (item_sorteado, data_sorteio) VALUES ($1, NOW())';
+        const query = 'INSERT INTO resultado_roleta (item_sorteado, data_sorteio) VALUES ($1, NOW())';
         await client.query(query, [item_sorteado]); // Usando 'client' em vez de 'pool'
         res.json({ success: true, message: 'Resultado salvo com sucesso' });
     } catch (error) {
@@ -227,7 +228,7 @@ app.post('/salvar-roleta', async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar resultado no banco de dados' });
     }
 });
-app.get('/sorteio', async (req, res) => {
+app.get('/historico', async (req, res) => {
     try {
       // Consulta os resultados da roleta
       const result = await client.query('SELECT item_sorteado, data_sorteio FROM roleta_resultados ORDER BY data_sorteio DESC LIMIT 10');
