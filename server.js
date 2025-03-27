@@ -78,7 +78,7 @@ client.connect()
 // Rota para recuperar todas as missões
 app.get('/get-missoes', async (req, res) => {
     try {
-        const result = await client.query('SELECT id, titulo, descricao, status, hora_publicada, hora_aceita FROM missoes');
+        const result = await client.query('SELECT id, titulo, descricao, status, recompensa, hora_publicada, hora_aceita FROM missoes');
         
         console.log(result.rows); // Verifique o que está sendo retornado
         res.status(200).json(result.rows);
