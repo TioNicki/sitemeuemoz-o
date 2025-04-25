@@ -26,7 +26,6 @@
             -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
         }
         .topo {
-    background-image: url(topo.png'); /* Substitua pelo caminho correto da imagem */
     background-size: cover;
     background-position: center;
     height: 100%; /* Ajuste conforme necessário */
@@ -46,6 +45,35 @@
             position: relative; /* Ajustado para que os elementos abaixo sejam posicionados corretamente */
             top: 52%; /* Ajuste conforme necessário */
         }
+        #telaCarregamento {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.685);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: sans-serif;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
         .spin-button {
             background-color: #cc3786; /* Cor rosa */
@@ -245,7 +273,91 @@
         .menu.expanded + .pull-arrow {
             left: 250px;
         }
+        /* Estilos para a caixa de diálogo */
+        #historicoModal {
+    display: none; /* Inicialmente escondido */
+    position: fixed;
+    z-index: 1; /* Garante que o modal fique acima dos outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* Fundo escuro com opacidade */
+}
 
+#historicoModal .modal-content {
+    background-color: #ff85c7;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+}
+
+#historicoItens {
+    margin-top: 15px;
+    max-height: 300px;
+    overflow-y: auto; /* Permite rolar os itens do histórico */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Distância entre os itens */
+    padding: 20px;
+}
+
+.historico-item {
+    background-color: #f8f8f8; /* Cor de fundo clara para destacar o item */
+    border: 1px solid #ddd; /* Borda sutil para separar os itens */
+    padding: 10px;
+    border-radius: 8px; /* Borda arredondada para um visual mais suave */
+    transition: background-color 0.3s ease-in-out; /* Efeito de transição */
+}
+
+.historico-item:hover {
+    background-color: #e0e0e0; /* Cor de fundo ao passar o mouse sobre o item */
+}
+
+.caixa-dialogo {
+    background-color: #f1f1f1; /* Cor de fundo diferente para a caixa de detalhes */
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc; /* Borda suave */
+    border-radius: 5px; /* Borda arredondada */
+}
+
+#historicoModal button {
+    background-color: #e00f7c; /* Cor vermelha para o botão de fechar */
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 4vw;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+#historicoModal button:hover {
+    background-color: #d0006a; /* Cor mais escura ao passar o mouse */
+}
+
+#historicoButton {
+    background-color: #3cff00;
+    color: white;
+    font-size: 4vw;
+    padding: 2.5% 5%;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    position: absolute; /* Permite controlar a posição na tela */
+    top: 83%; /* Exemplo de posição, ajuste conforme necessário */
+    right: 5%; /* Ajuste a posição horizontal conforme necessário */
+}
+
+#historicoButton:hover {
+    background-color: #0c8101;
+}
         @media (max-width: 600px) {
             .menu a {
                 font-size: 20px;
@@ -320,14 +432,19 @@
     </style>
 </head>
 <body>
+    <div id="telaCarregamento">
+        <div class="spinner"></div>
+        <p>Aguarde enquanto conectamos ao servidor...</p>
+      </div>      
     <div class="topo">
         <img src="images/topo.png" alt="Imagem do topo" style="width: 100%; height: auto;">
     </div>
     <div id="menu" class="menu">
-        <a href="paginainicial.html">Painel de Notícias</a>
-        <a href="cronometro.html">Cronômetro</a>
+        <a href="index.html"><span>Para se lembrar...</span></a>
+        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
+        <a href="cronometro.html"><span>Cronômetro</span></a>
         <a href="missoes.html">Missões</a>
-        <a href="roleta.html">Sorte do Amor</a>
+        <a href="roleta.html"><span>Sorte do amor</span></a>
     </div>
 
     <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
@@ -359,7 +476,61 @@
             <div class="prize-text" id="prizeText"></div>
         </div>
     </div>
+    <button id="historicoButton">Histórico</button>
+    <!-- Modal -->
+    <div id="historicoModal" class="modal">
+        <div class="modal-content">
+            <h2>Histórico</h2>
+            <div id="historicoItens"></div> <!-- Onde os itens serão inseridos -->
+            <button onclick="fecharHistorico()">Fechar</button>
+        </div>
+    </div>
+    
     <script>
+// Função para preencher a caixa de diálogo com os itens do histórico
+document.getElementById('historicoButton').addEventListener('click', async () => {
+    const response = await fetch('https://sitemeuemoz-o.onrender.com/historico');
+    const dados = await response.json();
+
+    // Preenche a caixa de diálogo com os itens do histórico
+    const historicoItens = document.getElementById('historicoItens');
+    historicoItens.innerHTML = ''; // Limpar antes de adicionar novos itens
+
+    dados.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('historico-item');
+        
+        // Formatar data para exibição (sem ajustes de fuso horário)
+        const dataFormatada = new Date(item.data_sorteio).toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+
+        // Exibir item sorteado e a data formatada
+        itemDiv.innerHTML = `
+            <span><strong>Item:</strong> ${item.item_sorteado}</span><br>
+            <span><strong>Data:</strong> ${dataFormatada}</span>
+        `;
+
+        historicoItens.appendChild(itemDiv);
+    });
+
+    // Exibe o modal
+    document.getElementById('historicoModal').style.display = 'flex';
+});
+
+// Função para fechar o modal
+function fecharHistorico() {
+    document.getElementById('historicoModal').style.display = 'none';
+}
+
+    // Função para fechar a caixa de diálogo
+    function fecharHistorico() {
+        document.getElementById('historicoModal').style.display = 'none';
+    }
         function openMenu() {
             document.getElementById("menu").classList.add("expanded");
             document.getElementById("pullArrow").innerHTML = "&#x3c;";
@@ -436,32 +607,34 @@
         document.getElementById("prizeContainer").style.display = "block";
 
         // Envia os resultados ao servidor
-        enviarResultados(results);
+        const itemGanho = chosenSymbol;
+        enviarResultado(itemGanho);
     }, 5000);
 }
 
-// Função para enviar os resultados ao servidor
-async function enviarResultados(resultados) {
+// Função para enviar o resultado ao servidor (apenas o item ganhado)
+async function enviarResultado(itemGanho) {
     try {
         const response = await fetch('https://sitemeuemoz-o.onrender.com/salvar-roleta', {
-            method: 'POST',
-            mode: 'cors',  // Importante para evitar bloqueio
+            method: 'POST',              // Garantindo que o método é POST
+            mode: 'cors',                // Importante para permitir requisições de outros domínios
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json',  // Enviando dados em formato JSON
             },
-            body: JSON.stringify({ sorteados: resultados.map(result => result.name) }), // Envia apenas os nomes dos itens sorteados
+            body: JSON.stringify({ item_sorteado: itemGanho.name }),  // Enviando o item sorteado no formato JSON
         });
 
+        // Verifica se a resposta foi bem-sucedida
         if (response.ok) {
-            console.log("Resultados enviados com sucesso!");
+            const data = await response.json();
+            console.log('Resultado salvo com sucesso:', data);
         } else {
-            console.error("Erro ao enviar resultados:", response.statusText);
+            console.error('Erro ao salvar o resultado:', response.status, response.statusText);
         }
     } catch (error) {
-        console.error("Erro ao tentar enviar os resultados:", error);
+        console.error('Erro ao enviar resultado:', error);
     }
 }
-
         function closeSlot(event) {
             if (!event.target.closest(".prize-container")) {
                 document.getElementById("slotMachine").style.display = "none";
@@ -499,5 +672,19 @@ async function enviarResultados(resultados) {
             <img src="images/porcentagem.png" alt="Imagem de porcentagem" style="width: 100%; height: auto;">
         </div>
     </div>    
+    <script>
+        window.addEventListener("load", async () => {
+          try {
+            const response = await fetch("https://sitemeuemoz-o.onrender.com/historico");
+            if (response.ok) {
+              document.getElementById("telaCarregamento").style.display = "none";
+            } else {
+              document.getElementById("telaCarregamento").innerHTML = "Erro ao conectar. Tente novamente mais tarde.";
+            }
+          } catch (e) {
+            document.getElementById("telaCarregamento").innerHTML = "Servidor indisponível. Tente novamente em instantes.";
+          }
+        });
+      </script>
 </body>
 </html>
