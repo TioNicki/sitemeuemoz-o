@@ -18,7 +18,35 @@
             display: flex;
             min-height: 100vh;
         }
+        #telaCarregamento {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: sans-serif;
+}
 
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
         /* Container principal */
         .container {
             display: flex;
@@ -293,6 +321,11 @@
     </style>
 </head>
 <body>
+    <div id="telaCarregamento">
+        <div class="spinner"></div>
+        <p>Aguarde enquanto conectamos ao servidor...</p>
+      </div>
+      
 
     <div class="container">
         <!-- Menu Lateral -->
@@ -303,22 +336,30 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="#" id="home-link" onclick="window.location.href='paginainicial.html'; return false;">Ir para Site</a></li>
-                    <li><a href="#" id="manage-news-link" onclick="toggleSubMenu('news-submenu')">Gerenciar Notícias</a>
+                    <li>
+                        <a href="#" id="manage-news-link" onclick="toggleSubMenu('news-submenu')">Gerenciar Notícias</a>
                         <ul id="news-submenu" style="display: none;">
                             <li><a href="#" id="add-news-link" onclick="showSection('add-news-section')">Adicionar Notícia</a></li>
                             <li><a href="#" id="news-list-link" onclick="showSection('news-list-section')">Lista de Notícias</a></li>
                         </ul>
                     </li>
-                    <li><a href="#" id="manage-missions-link" onclick="toggleSubMenu('missions-submenu')">Gerenciar Missões</a>
+                    <li>
+                        <a href="#" id="manage-missions-link" onclick="toggleSubMenu('missions-submenu')">Gerenciar Missões</a>
                         <ul id="missions-submenu" style="display: none;">
                             <li><a href="#" id="add-mission-link" onclick="showSection('add-mission-section')">Adicionar Missão</a></li>
                             <li><a href="#" id="missions-list-link" onclick="showSection('missions-list-section')">Lista de Missões</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="#" id="manage-roulette-link" onclick="toggleSubMenu('roulette-submenu')">Roleta</a>
+                        <ul id="roulette-submenu" style="display: none;">
+                            <li><a href="#" id="spin-roulette-link" onclick="showSection('spin-roulette-section')">Girar Roleta</a></li>
+                            <li><a href="#" id="roulette-history-link" onclick="showSection('roulette-history-section')">Histórico</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>                      
         </aside>
-
         <!-- Menu Hamburguer -->
         <div class="hamburger" id="hamburger">
             <div></div>
@@ -610,5 +651,19 @@ document.getElementById('manage-missions-link').addEventListener('click', functi
             document.getElementById(sectionId).classList.add('active');
         }
     </script>
+    <script>
+        window.addEventListener("load", async () => {
+          try {
+            const response = await fetch("https://sitemeuemoz-o.onrender.com/historico");
+            if (response.ok) {
+              document.getElementById("telaCarregamento").style.display = "none";
+            } else {
+              document.getElementById("telaCarregamento").innerHTML = "Erro ao conectar. Tente novamente mais tarde.";
+            }
+          } catch (e) {
+            document.getElementById("telaCarregamento").innerHTML = "Servidor indisponível. Tente novamente em instantes.";
+          }
+        });
+      </script>
 </body>
 </html>
