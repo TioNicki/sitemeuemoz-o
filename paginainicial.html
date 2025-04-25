@@ -25,6 +25,36 @@ body {
     overflow-x: hidden; /* Remover o overflow que pode estar escondendo */
     -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
 }
+#telaCarregamento {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: sans-serif;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 /* Título da página */
 h1 {
@@ -171,6 +201,11 @@ h1 {
     </style>
 </head>
 <body>
+    <div id="telaCarregamento">
+        <div class="spinner"></div>
+        <p>Aguarde enquanto conectamos ao servidor...</p>
+      </div>
+      
     <div id="menu" class="menu">
         <a href="paginainicial.html">Painel de Notícias</a>
         <a href="cronometro.html">Cronômetro</a>
@@ -252,5 +287,19 @@ function toggleMenu() {
     }
 }
     </script>
+    <script>
+        window.addEventListener("load", async () => {
+          try {
+            const response = await fetch("https://sitemeuemoz-o.onrender.com/historico");
+            if (response.ok) {
+              document.getElementById("telaCarregamento").style.display = "none";
+            } else {
+              document.getElementById("telaCarregamento").innerHTML = "Erro ao conectar. Tente novamente mais tarde.";
+            }
+          } catch (e) {
+            document.getElementById("telaCarregamento").innerHTML = "Servidor indisponível. Tente novamente em instantes.";
+          }
+        });
+      </script>
 </body>
 </html>
