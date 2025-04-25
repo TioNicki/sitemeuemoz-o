@@ -212,16 +212,15 @@ app.delete('/delete-news/:id', async (req, res) => {
 });
 
 // Rota para salvar o resultado de um giro na roleta
-app.post('/salvar-roleta', async (req, res) => {
+app.post('/salvar-roleta', cors(corsOptions), async (req, res) => {
     const { item_sorteado } = req.body;
-
     if (!item_sorteado) {
         return res.status(400).json({ error: 'O item sorteado é obrigatório' });
     }
 
     try {
         const query = 'INSERT INTO roleta_resultados (item_sorteado, data_sorteio) VALUES ($1, NOW())';
-        await client.query(query, [item_sorteado]); // Usando 'client' em vez de 'pool'
+        await client.query(query, [item_sorteado]); // Usando 'client' para realizar a query
         res.json({ success: true, message: 'Resultado salvo com sucesso' });
     } catch (error) {
         console.error('Erro ao salvar o resultado da roleta:', error);
