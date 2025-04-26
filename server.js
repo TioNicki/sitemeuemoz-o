@@ -240,22 +240,22 @@ app.get('/historico', async (req, res) => {
         res.status(500).json({ error: 'Erro ao consultar os resultados' });
     }
 });
-// Rota para adicionar uma novidade
-app.post('/add-novidade', async (req, res) => {
-    const { content } = req.body; // O conteúdo da novidade será enviado no corpo da requisição
 
-    if (!content) {
+app.post('/add-novidade', async (req, res) => {
+    console.log(req.body); // Adicionando log para verificar o conteúdo
+
+    const { content } = req.body; // O conteúdo da novidade
+
+    if (!content || content.trim() === '') {
         return res.status(400).json({ error: 'Conteúdo da novidade é obrigatório!' });
     }
 
     try {
-        // Insere a novidade na tabela 'novidades'
         const result = await client.query(
             'INSERT INTO novidades (conteudo) VALUES ($1) RETURNING *',
-            [content] // O conteúdo enviado pela requisição
+            [content]
         );
 
-        // Retorna a novidade inserida
         res.status(201).json({
             success: true,
             message: 'Novidade adicionada com sucesso!',
