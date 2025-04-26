@@ -227,6 +227,7 @@ app.post('/salvar-roleta', cors(corsOptions), async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar resultado no banco de dados' });
     }
 });
+
 app.get('/historico', async (req, res) => {
     try {
         // Consulta os resultados da roleta
@@ -237,6 +238,42 @@ app.get('/historico', async (req, res) => {
     } catch (err) {
         console.error('Erro ao consultar os resultados:', err);
         res.status(500).json({ error: 'Erro ao consultar os resultados' });
+    }
+});
+// Rota para adicionar uma novidade
+app.post('/add-novidade', async (req, res) => {
+    const { content } = req.body; // O conteúdo da novidade será enviado no corpo da requisição
+
+    if (!content) {
+        return res.status(400).json({ error: 'Conteúdo da novidade é obrigatório!' });
+    }
+
+    try {
+        // Insere a novidade na tabela 'novidades'
+        const result = await client.query(
+            'INSERT INTO novidades (conteudo) VALUES ($1) RETURNING *',
+            [content] // O conteúdo enviado pela requisição
+        );
+
+        // Retorna a novidade inserida
+        res.status(201).json({
+            success: true,
+            message: 'Novidade adicionada com sucesso!',
+            data: result.rows[0]
+        });
+    } catch (err) {
+        console.error('Erro ao adicionar novidade:', err);
+        res.status(500).json({ error: 'Erro ao adicionar a novidade' });
+    }
+});
+// Rota para recuperar todas as novidades
+app.get('/get-novidades', async (req, res) => {
+    try {
+        const result = await client.query('SELECT * FROM novidades ORDER BY data_criacao DESC');
+        res.status(200).json(result.rows); // Retorna todas as novidades ordenadas pela data de criação
+    } catch (err) {
+        console.error('Erro ao obter as novidades:', err);
+        res.status(500).json({ error: 'Erro ao obter as novidades' });
     }
 });
 // Iniciar o servidor
