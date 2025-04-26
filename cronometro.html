@@ -23,7 +23,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.685);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -254,79 +254,6 @@
             }
         }
 
-        .menu {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #ff73bf; /* Tom roxo */
-            overflow-x: hidden;
-            transition: width 0.5s;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            border-radius: 0 10px 10px 0;
-        }
-
-        .menu.expanded {
-            width: 250px;
-        }
-
-        .menu a {
-            padding: 15px 8px 15px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            margin-top: 20px;
-            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul em dispositivos móveis */
-        }
-
-        .menu a img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-
-        .menu a span {
-            display: none;
-        }
-
-        .menu.expanded a span {
-            display: inline;
-        }
-
-        .menu a:hover {
-            color: #f1f1f1;
-        }
-
-        .pull-arrow {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            font-size: 30px;
-            cursor: pointer;
-            background-color: #ff73bf; /* Tom roxo */
-            color: #fff;
-            padding: 10px;
-            border-radius: 0 10px 10px 0;
-            z-index: 2;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: left 0.5s;
-            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul em dispositivos móveis */
-            border: none;
-        }
-
-        .menu.expanded + .pull-arrow {
-            left: 250px;
-        }
     </style>
 </head>
 <body>
@@ -334,15 +261,6 @@
         <div class="spinner"></div>
         <p>Aguarde enquanto conectamos ao servidor...</p>
       </div>
-      
-    <div id="menu" class="menu">
-        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
-        <a href="cronometro.html"><span>Cronômetro</span></a>
-        <a href="missoes.html">Missões</a>
-        <a href="roleta.html"><span>Sorte do Amor</span></a>
-    </div>
-
-    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
 
     <h1>Tempo Juntos</h1>
     <div class="panel">
@@ -514,19 +432,6 @@ function removeTimerFromStorage(name) {
     
     // Atualiza o localStorage
     localStorage.setItem("timers", JSON.stringify(timers));
-}
-
-        function toggleMenu() {
-    let menu = document.getElementById("menu");
-    let arrow = document.getElementById("pullArrow");
-
-    if (menu.classList.contains("expanded")) {
-        menu.classList.remove("expanded");
-        arrow.innerHTML = "&#x3e;"; // Ícone para abrir
-    } else {
-        menu.classList.add("expanded");
-        arrow.innerHTML = "&#x3c;"; // Ícone para fechar
-    }
 }
 </script>    
 <script>
