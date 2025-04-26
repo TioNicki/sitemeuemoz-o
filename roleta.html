@@ -194,21 +194,7 @@
 
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
-        .menu {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 9999; /* Maior z-index para garantir que o menu fique acima de tudo */
-            top: 0;
-            left: 0;
-            background-color: #ff73bf; /* Tom roxo */
-            overflow-x: hidden;
-            transition: width 0.5s;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            border-radius: 0 10px 10px 0;
-        }
-
+    
         .spin-button, .regras {
             z-index: 1; /* Garantir que o botão de girar e as regras fiquem atrás do menu */
         }
@@ -217,62 +203,6 @@
             z-index: 1; /* Manter os outros elementos atrás do menu */
         }
 
-        .menu.expanded {
-            width: 250px;
-        }
-
-        .menu a {
-            padding: 15px 8px 15px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            margin-top: 20px;
-        }
-
-        .menu a img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-
-        .menu a span {
-            display: none;
-        }
-
-        .menu.expanded a span {
-            display: inline;
-        }
-
-        .menu a:hover {
-            color: #f1f1f1;
-        }
-
-        .pull-arrow {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            font-size: 30px;
-            cursor: pointer;
-            background-color: #ff73bf; /* Tom roxo */
-            color: #fff;
-            padding: 10px;
-            border-radius: 0 10px 10px 0;
-            z-index: 2;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: left 0.5s;
-            border: none; /* Remove as bordas pretas */
-        }
-
-        .menu.expanded + .pull-arrow {
-            left: 250px;
-        }
         /* Estilos para a caixa de diálogo */
         #historicoModal {
     display: none; /* Inicialmente escondido */
@@ -439,15 +369,7 @@
     <div class="topo">
         <img src="images/topo.png" alt="Imagem do topo" style="width: 100%; height: auto;">
     </div>
-    <div id="menu" class="menu">
-        <a href="paginainicial.html"><span>Painel de Noticias</span></a>
-        <a href="cronometro.html"><span>Cronômetro</span></a>
-        <a href="missoes.html">Missões</a>
-        <a href="roleta.html"><span>Sorte do amor</span></a>
-    </div>
-
-    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
-
+    
     <img src="images/caçaniqueis.png" alt="Caça-Níqueis" class="background-image">
     
     <button class="spin-button" onclick="startSlot()">Girar</button>
@@ -530,25 +452,7 @@ function fecharHistorico() {
     function fecharHistorico() {
         document.getElementById('historicoModal').style.display = 'none';
     }
-        function openMenu() {
-            document.getElementById("menu").classList.add("expanded");
-            document.getElementById("pullArrow").innerHTML = "&#x3c;";
-            document.getElementById("pullArrow").style.left = "250px";
-        }
 
-        function closeMenu() {
-            document.getElementById("menu").classList.remove("expanded");
-            document.getElementById("pullArrow").innerHTML = "&#x3e;";
-            document.getElementById("pullArrow").style.left = "0";
-        }
-
-        function toggleMenu() {
-            if (document.getElementById("menu").classList.contains("expanded")) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        }
         function startSlot() {
     document.body.style.backgroundColor = "black";
     document.getElementById("slotMachine").style.display = "flex";
