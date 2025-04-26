@@ -24,7 +24,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.685);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -318,6 +318,65 @@
                 margin-left: 250px;
             }
         }
+       /* Estilo para a lista de novidades */
+#novidadesList {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px; /* Espaço acima da lista */
+}
+
+/* Estilo para cada item de novidade */
+#novidadesList li {
+    background-color: #ffffff; /* Fundo branco para cada novidade */
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    position: relative; /* Para o botão de exclusão ficar no canto */
+    min-height: 120px; /* Altura mínima para cada item */
+    display: flex;
+    flex-direction: column; /* Empilha o conteúdo e o botão */
+    justify-content: space-between; /* Espaço entre conteúdo e botão */
+    align-items: flex-start; /* Alinha o conteúdo à esquerda */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeitos de transição */
+}
+
+/* Efeito ao passar o mouse sobre a caixinha */
+#novidadesList li:hover {
+    transform: translateY(-5px); /* Eleva a caixinha */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Aumenta a sombra */
+}
+
+/* Adiciona uma altura mínima para garantir que o botão não saia da área visível */
+#novidadesList li {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    position: relative; /* Para permitir o posicionamento do botão dentro */
+    min-height: 120px; /* Altura mínima maior */
+}
+
+/* Estilo do botão de excluir */
+.delete-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+/* Efeito de hover no botão */
+.delete-button:hover {
+    background-color: #c0392b;
+}
+
     </style>
 </head>
 <body>
@@ -357,6 +416,13 @@
                             <li><a href="#" id="roulette-history-link" onclick="showSection('roulette-history-section')">Histórico</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="#" id="manage-novidades-link" onclick="toggleSubMenu('novidades-submenu')">Gerenciar Novidades</a>
+                        <ul id="novidades-submenu" style="display: none;">
+                            <li><a href="#" id="add-novidades-link" onclick="showSection('add-novidade-section')">Adicionar Novidade</a></li>
+                            <li><a href="#" id="novidades-list-link" onclick="showSection('novidades-list-section')">Lista de Novidades</a></li>
+                        </ul>
+                    </li>                                       
                 </ul>
             </nav>                      
         </aside>
@@ -370,15 +436,13 @@
         <!-- Conteúdo Principal -->
         <main class="main-content">
             <!-- Seção de Notícias -->
-            <section id="add-news-section" class="section active">
+            <section id="add-news-section" class="section">
                 <h1>Adicionar Notícia</h1>
                 <form id="newsForm">
                     <label for="title">Título</label>
                     <input type="text" id="title" placeholder="Digite o título da notícia" required>
-
                     <label for="content">Conteúdo</label>
                     <textarea id="content" placeholder="Digite o conteúdo da notícia" rows="5" required></textarea>
-
                     <button type="submit">Adicionar Notícia</button>
                 </form>
             </section>
@@ -421,11 +485,154 @@
             
                 <h2>Missões Disponíveis</h2>
                 <ul id="missionsAvailableList"></ul> <!-- Lista de missões disponíveis -->
+            </section>
+
+            <section id="add-novidade-section" class="section">
+                <h1>Adicionar Novidade</h1>
+                <form id="novidadeForm">
+                    <label for="novidade-text">Frase</label>
+                    <input type="text" id="novidade-text" placeholder="Digite a frase para a novidade" required>
+                    <button type="submit">Adicionar Novidade</button>
+                </form>
+            </section>               
+
+            <section id="novidades-list-section" class="section">
+                <h1>Lista de Novidades</h1>
+                <ul id="novidadesList">
+                    <!-- Exemplo de item de novidade -->
+                    <li id="novidade-1">
+                        <p>Conteúdo da novidade...</p>
+                        <button class="delete-button" onclick="deleteNovidade(1)">Excluir</button>
+                    </li>
+                    <!-- Os itens serão adicionados dinamicamente via JavaScript -->
+                </ul>                
             </section>            
         </main>
     </div>
 
     <script>
+        // Função para adicionar uma novidade
+document.getElementById('novidadeForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Impede o comportamento padrão do formulário
+
+    // Coleta o conteúdo da novidade
+    const conteudo = document.getElementById('novidade-text').value.trim();
+
+    if (conteudo === '') {
+        alert('Por favor, insira o conteúdo da novidade.');
+        return;
+    }
+
+    // Envia os dados para o servidor
+    fetch('https://sitemeuemoz-o.onrender.com/add-novidade', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: conteudo }) // Envia o conteúdo no corpo da requisição
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Novidade adicionada com sucesso!');
+            // Após adicionar, recarrega as novidades
+            carregarNovidades();
+            // Limpa o formulário
+            document.getElementById('novidadeForm').reset();
+        } else {
+            alert('Erro ao adicionar a novidade.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao adicionar a novidade:', error);
+        alert('Erro ao se conectar ao servidor.');
+    });
+});
+// Função para carregar as novidades no painel admin
+function carregarNovidades() {
+    fetch('https://sitemeuemoz-o.onrender.com/get-novidades') // A nova rota para obter as novidades
+        .then(response => response.json())
+        .then(data => {
+            const novidadesList = document.getElementById('novidadesList'); // ID da lista de novidades
+
+            // Limpa a lista anterior
+            novidadesList.innerHTML = '';
+
+            if (data.length > 0) {
+                data.forEach(novidade => {
+                    const itemNovidade = document.createElement('li');
+                    itemNovidade.id = `novidade-${novidade.id}`; // Define o ID único para cada item
+
+                    // Garantir que estamos acessando os campos corretos
+                    const conteudo = novidade.conteudo || 'Conteúdo não disponível'; // Caso o conteúdo não exista
+                    const titulo = novidade.titulo || 'Título não disponível'; // Caso o título não exista
+                    const dataCriacao = new Date(novidade.data_criacao); // Certificando-se de que data_criacao é tratado corretamente
+
+                    // Verificando se a data foi criada corretamente
+                    if (isNaN(dataCriacao.getTime())) {
+                        console.error('Data de criação inválida:', novidade.data_criacao);
+                    }
+
+                    // Exibe título, conteúdo e data corretamente
+                    itemNovidade.innerHTML = `
+                        <strong>${titulo}</strong>
+                        <p>${conteudo}</p>
+                        <small>Data de criação: ${dataCriacao.toLocaleDateString()}</small>
+                        <button class="delete-button" onclick="deleteNovidade(${novidade.id})">Excluir</button> <!-- Botão de excluir -->
+                    `;
+
+                    // Adiciona a novidade à lista
+                    novidadesList.appendChild(itemNovidade);
+                });
+            } else {
+                // Caso não haja novidades, exibe uma mensagem
+                novidadesList.innerHTML = '<li>Não há novidades para mostrar.</li>';
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar as novidades:', error);
+            const novidadesList = document.getElementById('novidadesList');
+            novidadesList.innerHTML = '<li>Erro ao carregar as novidades.</li>';
+        });
+}
+
+// Função para excluir a novidade
+function deleteNovidade(id) {
+    if (confirm('Tem certeza de que deseja excluir esta novidade?')) {
+        fetch(`https://sitemeuemoz-o.onrender.com/delete-novidade/${id}`, {
+            method: 'DELETE', // Método DELETE
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Novidade excluída com sucesso!');
+                // Remover o item da lista na interface
+                const itemNovidade = document.getElementById(`novidade-${id}`);
+                if (itemNovidade) {
+                    itemNovidade.remove();
+                }
+                // Recarregar as novidades após a exclusão
+                carregarNovidades();
+            } else {
+                alert('Erro ao excluir a novidade.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao se conectar ao servidor.');
+        });
+    }
+}
+
+// Chama a função para carregar as novidades assim que a página for carregada
+document.addEventListener('DOMContentLoaded', function () {
+    carregarNovidades();
+});
+
+
         // Função para lidar com o envio do formulário de notícias
         document.getElementById('newsForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -646,10 +853,18 @@ document.getElementById('manage-missions-link').addEventListener('click', functi
         };
         // Mostra ou esconde as seções de notícias e missões
         function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-        }
+    // Esconde todas as seções
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+        section.classList.remove('active'); // Remove a classe que torna a seção visível
+    });
+
+    // Exibe a seção correta
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.classList.add('active'); // Adiciona a classe para exibir a seção
+    }
+}
     </script>
     <script>
         window.addEventListener("load", async () => {
