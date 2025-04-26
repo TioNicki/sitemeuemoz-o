@@ -24,7 +24,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.685);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -206,63 +206,6 @@ button.aceitar-missao:hover {
                 font-size: 0.8em;
             }
         }
-
-        .menu {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #ff73bf;
-    overflow-x: hidden;
-    transition: width 0.5s;
-    padding-top: 60px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    border-radius: 0 10px 10px 0;
-}
-
-.menu.expanded {
-    width: 250px;
-}
-
-.menu a {
-    padding: 15px 8px 15px 16px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    transition: 0.3s;
-    margin-top: 20px;
-}
-
-.menu a:hover {
-    color: #f1f1f1;
-}
-
-.pull-arrow {
-    position: fixed;
-    top: 20px;
-    left: 0;
-    font-size: 30px;
-    cursor: pointer;
-    background-color: #ff73bf;
-    color: #fff;
-    padding: 10px;
-    border-radius: 0 10px 10px 0;
-    border: transparent;
-    z-index: 2;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: left 0.5s;
-}
-
-.menu.expanded + .pull-arrow {
-    left: 250px;
-}
     </style>
 </head>
 <body>
@@ -270,14 +213,6 @@ button.aceitar-missao:hover {
         <div class="spinner"></div>
         <p>Aguarde enquanto conectamos ao servidor...</p>
       </div>
-    <div id="menu" class="menu">
-        <a href="paginainicial.html">Painel de Notícias</a>
-        <a href="cronometro.html">Cronômetro</a>
-        <a href="missoes.html">Missões</a>
-        <a href="roleta.html">Sorte do Amor</a>
-    </div>
-
-    <button id="pullArrow" class="pull-arrow" onclick="toggleMenu()">&#x3e;</button>
 
     <div class="container">
         <header>
@@ -370,20 +305,6 @@ button.aceitar-missao:hover {
 
         // Chama a função para carregar as missões ao carregar a página
         window.onload = buscarMissoes;
-
-        function toggleMenu() {
-    const menu = document.getElementById("menu");
-    const button = document.getElementById("pullArrow");
-    if (menu.classList.contains("expanded")) {
-        menu.classList.remove("expanded");
-        button.innerHTML = "&#x3e;";
-        button.style.left = "0";
-    } else {
-        menu.classList.add("expanded");
-        button.innerHTML = "&#x3c;";
-        button.style.left = "250px";
-    }
-}
     </script>
     <script>
         window.addEventListener("load", async () => {
