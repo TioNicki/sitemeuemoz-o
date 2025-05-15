@@ -235,7 +235,8 @@
         }
 /* Adiciona uma "caixa" para cada missão */
 #missionsInProgressList li,
-#missionsAvailableList li {
+#missionsAvailableList li,
+#missionsCompletedList li {
     background-color: #f0f0f0;
     padding: 20px;
     margin: 10px 0;
@@ -485,6 +486,10 @@
             
                 <h2>Missões Disponíveis</h2>
                 <ul id="missionsAvailableList"></ul> <!-- Lista de missões disponíveis -->
+
+                <h3>Missões Concluídas</h3>
+                <ul id="missionsCompletedList"></ul>
+
             </section>
 
             <section id="add-novidade-section" class="section">
@@ -737,41 +742,76 @@ function updateMissionsList() {
         .then(missionsList => {
             const missionsInProgressList = document.getElementById('missionsInProgressList');
             const missionsAvailableList = document.getElementById('missionsAvailableList');
+            const missionsCompletedList = document.getElementById('missionsCompletedList');
 
-            // Limpa as listas antes de adicionar novas missões
             missionsInProgressList.innerHTML = '';
             missionsAvailableList.innerHTML = '';
+            missionsCompletedList.innerHTML = '';
 
             missionsList.forEach(function(missionItem) {
                 const li = document.createElement('li');
-                
-                // Formata a data de publicação e aceitação, se disponível
+
                 const horaPublicada = missionItem.hora_publicada 
                     ? new Date(missionItem.hora_publicada).toLocaleString('pt-BR')
                     : 'Não definida';
                 const horaAceita = missionItem.hora_aceita 
                     ? new Date(missionItem.hora_aceita).toLocaleString('pt-BR')
                     : 'Não definida';
+                const horaConcluida = missionItem.hora_concluida 
+                    ? new Date(missionItem.hora_concluida).toLocaleString('pt-BR')
+                    : '—';
 
                 li.innerHTML = `
                     <strong>${missionItem.titulo}</strong><br>
                     <p>${missionItem.descricao}</p>
-                    <small>Status: ${missionItem.status}</small><br>
+                    <small>Status: 
+                        <select onchange="alterarStatusMissao('${missionItem.id}', this.value)">
+                            <option value="disponível" ${missionItem.status === 'disponível' ? 'selected' : ''}>disponível</option>
+                            <option value="em andamento" ${missionItem.status === 'em andamento' ? 'selected' : ''}>em andamento</option>
+                            <option value="concluída" ${missionItem.status === 'concluída' ? 'selected' : ''}>concluída</option>
+                        </select>
+                    </small><br>
                     <small>Hora Publicada: ${horaPublicada}</small><br>
                     <small>Hora Aceita: ${horaAceita}</small><br>
+                    <small>Hora Concluída: ${horaConcluida}</small><br>
                     <button class="delete-button" onclick="deleteMission('${missionItem.id}')">Excluir</button>
                 `;
 
-                // Adiciona à lista correspondente com base no status
-                if (missionItem.status.toLowerCase() === 'em andamento') {
+                const status = missionItem.status.toLowerCase();
+
+                if (status === 'em andamento') {
                     missionsInProgressList.appendChild(li);
-                } else if (missionItem.status.toLowerCase() === 'disponível') {
+                } else if (status === 'disponível') {
                     missionsAvailableList.appendChild(li);
+                } else if (status === 'concluída') {
+                    missionsCompletedList.appendChild(li);
                 }
             });
         })
         .catch(error => console.error('Erro ao atualizar a lista de missões:', error));
 }
+function alterarStatusMissao(missionId, novoStatus) {
+    fetch(`https://sitemeuemoz-o.onrender.com/alterar-status/${missionId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: novoStatus })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Erro ao atualizar status');
+        return response.json();
+    })
+    .then(data => {
+        alert('Status atualizado com sucesso!');
+        updateMissionsList(); // Atualiza a lista
+    })
+    .catch(error => {
+        console.error('Erro ao alterar status da missão:', error);
+        alert('Falha ao atualizar status.');
+    });
+}
+
         // Função para excluir uma missão
         function deleteMission(missionId) {
             fetch(`https://sitemeuemoz-o.onrender.com/delete-missao/${missionId}`, {
