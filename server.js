@@ -159,8 +159,39 @@ app.delete('/delete-missao/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao excluir missão' });
     }
 });
+// Rota para alterar apenas o status e salvar hora_concluida, se aplicável
+app.put('/alterar-status/:id', async (req, res) => {
+    const missionId = req.params.id;
+    const { status } = req.body;
 
+    if (!status) {
+        return res.status(400).json({ error: 'Status é obrigatório' });
+    }
 
+    try {
+        let query;
+        let values;
+
+        if (status.toLowerCase() === 'concluída' || status.toLowerCase() === 'concluido') {
+            query = 'UPDATE missoes SET status = $1, hora_concluida = NOW() AT TIME ZONE \'UTC\' WHERE id = $2 RETURNING *';
+            values = [status, missionId];
+        } else {
+            query = 'UPDATE missoes SET status = $1 WHERE id = $2 RETURNING *';
+            values = [status, missionId];
+        }
+
+        const result = await client.query(query, values);
+
+        if (result.rowCount > 0) {
+            res.status(200).json({ message: 'Status atualizado com sucesso', missao: result.rows[0] });
+        } else {
+            res.status(404).json({ error: 'Missão não encontrada' });
+        }
+    } catch (err) {
+        console.error('Erro ao atualizar status:', err);
+        res.status(500).json({ error: 'Erro ao atualizar status da missão' });
+    }
+});
 // Rota para adicionar uma notícia
 app.post('/add-news', async (req, res) => {
     const { titulo, conteudo } = req.body;
