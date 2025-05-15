@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Missões</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Página de Missões</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #ffe6f0, #f9f9f9);
+      color: #333;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffccff;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent; /* Remove a caixa azul nos cliques */
-        }
-        #telaCarregamento {
+    #telaCarregamento {
   position: fixed;
   top: 0;
   left: 0;
@@ -48,278 +44,340 @@
   100% { transform: rotate(360deg); }
 }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 20px;
-            background-color: #cc3786;
-            color: white;
-            border-radius: 8px;
-        }
-
-        h1 {
-            margin: 0;
-        }
-
-        main {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-        }
-        .section {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px #cc3786;
-    width: 100%;
-    margin-top: 10%; /* <-- Essa linha move a seção mais para baixo */
-}
-
-.section h2 {
-    color: #2d3a4b;
-    margin: 0;
-    cursor: pointer;
-    padding: 10px;
-    background-color: #ff85c7;
-    border-radius: 5px;
-    text-align: center;
+    .container {
+  max-width: 1000px; /* ou até 100% se preferir largura total */
+  margin: 100px auto 40px auto;
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin-top: 10px;
-        }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-        li {
-            background-color: #ffb6dd;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    header h1 {
+      font-size: 2.5em;
+      color: #cc3786;
+    }
 
-        .missao-titulo {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-        }
+    .filtros {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
 
-        .missao-descricao {
-            margin-top: 5px;
-            color: #555;
-        }
-
-        .missao-recompensa {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #2d3a4b;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        button.aceitar-missao {
-    background-color: #4CAF50; /* Cor de fundo verde */
-    color: white; /* Texto branco */
-    font-size: 16px; /* Tamanho da fonte */
-    padding: 10px 20px; /* Espaçamento interno */
-    border: none; /* Sem borda */
-    border-radius: 5px; /* Bordas arredondadas */
-    cursor: pointer; /* Cursor de ponteiro */
-    transition: background-color 0.3s ease; /* Transição suave na cor de fundo */
-    display: block; /* Faz com que o botão ocupe toda a linha */
-    margin: 20px auto; /* Centraliza o botão */
-    width: 200px; /* Largura fixa do botão */
-}
-
-button.aceitar-missao:hover {
-    background-color: #45a049; /* Cor de fundo mais escura no hover */
+    .filtro-card {
+  flex: 0 0 70px;
+  max-width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  color: #333;
 }
 
 
-        /* Estilos responsivos */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
+    .filtro-card:hover {
+      transform: scale(1.05);
+    }
 
-            header {
-                padding: 15px;
-            }
+    .filtro-card.amarelo {
+      background-color: #F1C40F;
+    }
 
-            .section h2 {
-                font-size: 1.1em;
-            }
+    .filtro-card.cinza {
+      background-color: #4A90E2;
+    }
+    .filtro-card.verde {
+    background-color: #58D68D;
+    }
+    .filtro-card.active {
+  box-shadow: 0 0 15px 3px #ffb6dd; /* brilho amarelo */
+  transform: scale(1.1);
+  cursor: default;
+}
 
-            li {
-                padding: 12px;
-                margin-bottom: 10px;
-            }
+    .section {
+      background-color: transparent;
+      padding: 20px;
+      border-radius: 10px;
+    }
 
-            .missao-titulo {
-                font-size: 1em;
-            }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
 
-            .missao-descricao {
-                font-size: 0.9em;
-            }
+    li {
+  background-color: #ffb6dd;
+  padding: 25px 20px;
+  margin-bottom: 25px;
+  border-radius: 15px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1.15em;
+  margin-left: 0;
+  margin-right: 0;
+}
 
-            .missao-recompensa {
-                font-size: 0.9em;
-            }
-        }
 
-        @media (max-width: 480px) {
-            header {
-                padding: 10px;
-            }
+ul#lista-missoes {
+  width: 100%;
+}
 
-            .section h2 {
-                font-size: 1em;
-                padding: 8px;
-            }
 
-            li {
-                padding: 10px;
-                margin-bottom: 8px;
-            }
+.missao-titulo {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 5px;
+  word-wrap: break-word;
+}
 
-            .missao-titulo {
-                font-size: 0.9em;
-            }
+.missao-descricao {
+  margin-top: 8px;
+  font-size: 0.95em;
+}
 
-            .missao-descricao {
-                font-size: 0.8em;
-            }
+.missao-recompensa {
+  margin-top: 12px;
+  font-weight: bold;
+}
 
-            .missao-recompensa {
-                font-size: 0.8em;
-            }
-        }
-    </style>
+.aceitar-missao {
+  margin: 15px auto 0 auto;
+  padding: 8px 20px;
+  border: none;
+  background-color: #28a745; /* verde */
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.aceitar-missao:hover {
+  background-color: #218838; /* verde mais escuro no hover */
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+    @media screen and (max-width: 600px) {
+      .filtro-card {
+    font-size: 1em;
+    height: 50px;
+    max-width: 60px;
+  }
+}
+      .container {
+        margin: 30px 10px;
+        padding: 15px 0;
+      }
+
+      header h1 {
+        font-size: 1.8em;
+      }
+
+      .filtro-card {
+        font-size: 1.5em;
+        height: 90px;
+        max-width: 100px;
+      }
+
+      .missao-descricao,
+      .missao-recompensa {
+        font-size: 0.9em;
+      }
+      li {
+  width: 100%;
+  padding: 20px 15px;
+  margin-left: 0;
+  margin-right: 0;
+}
+.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+  </style>
 </head>
 <body>
-    <div id="telaCarregamento">
-        <div class="spinner"></div>
-        <p>Aguarde enquanto conectamos ao servidor...</p>
+  <div id="telaCarregamento">
+    <div class="spinner"></div>
+    <p>Aguarde enquanto conectamos ao servidor...</p>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>Missões</h1>
+    </header>
+
+    <div class="filtros">
+      <div class="filtro-card cinza" onclick="filtrarMissoes('disponível')">
+        <span id="contador-disponivel">0</span>
       </div>
-
-    <div class="container">
-        <header>
-            <h1>Missões</h1>
-        </header>
-        <main>
-            <div class="section" id="missao-em-andamento">
-                <h2 onclick="toggleSection('lista-missoes-andamento')">Missões em Andamento</h2>
-                <ul id="lista-missoes-andamento"></ul>
-            </div>
-            <div class="section" id="missao-disponivel">
-                <h2 onclick="toggleSection('lista-missoes-disponiveis')">Missões Disponíveis</h2>
-                <ul id="lista-missoes-disponiveis"></ul>
-            </div>
-        </main>
+      <div class="filtro-card amarelo" onclick="filtrarMissoes('em andamento')">
+        <span id="contador-andamento">0</span>
+      </div>
+      <div class="filtro-card verde" onclick="filtrarMissoes('concluída')">
+        <span id="contador-concluida">0</span>
+      </div>      
     </div>
-
-    <script>
-        // URL do backend (ajuste conforme necessário)
-        const API_URL = 'https://sitemeuemoz-o.onrender.com/get-missoes'; // Adicione "/missoes"
     
-        // Função para buscar as missões do banco de dados
-        async function buscarMissoes() {
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar missões");
-                }
-                const missoes = await response.json();
 
-                // Separa as missões em andamento e disponíveis
-                const missaoEmAndamento = missoes.filter(m => m.status === "em andamento");
-                const missaoDisponivel = missoes.filter(m => m.status === "disponível");
+    <main>
+      <div class="section">
+        <ul id="lista-missoes"></ul>
+      </div>
+    </main>
+  </div>
 
-                // Exibe as missões em andamento
-                renderizarMissoes("lista-missoes-andamento", missaoEmAndamento);
+  <script>
+    const API_URL = 'https://sitemeuemoz-o.onrender.com/get-missoes';
 
-                // Exibe as missões disponíveis
-                renderizarMissoes("lista-missoes-disponiveis", missaoDisponivel);
-            } catch (error) {
-                console.error("Erro ao buscar missões:", error);
-            }
-        }
+    async function buscarMissoes() {
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error("Erro ao buscar missões");
 
-        // Função para renderizar missões na tela
-        function renderizarMissoes(elementId, missoes) {
-    const lista = document.getElementById(elementId);
-    lista.innerHTML = missoes.map(missao => {
-        return `
-            <li>
-                <div class="missao-titulo">${missao.titulo}</div>
-                <div class="missao-descricao" style="white-space: pre-line;">${missao.descricao}</div>
-                <div class="missao-recompensa">Recompensa: ${missao.recompensa}</div>
-                ${missao.status === "disponível" ? `<button class="aceitar-missao" onclick="aceitarMissao(${missao.id})">Aceitar Missão</button>` : ''}
-            </li>
-        `;
-    }).join("");
+    const missoes = await response.json();
+
+    const missaoEmAndamento = missoes.filter(m => m.status === "em andamento");
+    const missaoDisponivel = missoes.filter(m => m.status === "disponível");
+    const missaoConcluida = missoes.filter(m => m.status === "concluída");
+
+    document.getElementById("contador-andamento").textContent = missaoEmAndamento.length;
+    document.getElementById("contador-disponivel").textContent = missaoDisponivel.length;
+    document.getElementById("contador-concluida").textContent = missaoConcluida.length;
+
+    window.missoesTodas = missoes;
+    
+    // Exibe inicialmente só as missões disponíveis:
+    filtrarMissoes('disponível');
+
+  } catch (error) {
+    console.error("Erro ao buscar missões:", error);
+  }
 }
 
-        // Função para aceitar a missão e mudar seu status para "Em andamento"
-        async function aceitarMissao(idMissao) {
-        try {
-        // Envia a requisição para atualizar o status da missão para "Em andamento"
-        const response = await fetch(`https://sitemeuemoz-o.onrender.com/aceitar-missao/${idMissao}`, {
-            method: 'PUT', // Método PUT para atualizar a missão
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                status: 'em andamento' // Novo status para a missão
-            })
+
+
+function renderizarMissoes(lista) {
+  const ul = document.getElementById("lista-missoes");
+
+  // Ordenar as missões: disponível -> em andamento -> concluída
+  const ordemStatus = { "disponível": 1, "em andamento": 2, "concluída": 3 };
+  lista.sort((a, b) => (ordemStatus[a.status] || 99) - (ordemStatus[b.status] || 99));
+
+  // Adiciona animação de saída
+  ul.classList.remove("fade-in");
+  ul.classList.add("fade-out");
+
+  setTimeout(() => {
+    ul.innerHTML = "";
+
+    lista.forEach(m => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="missao-titulo">${m.titulo}</div>
+        <div class="missao-descricao">${m.descricao.replace(/\n/g, '<br>')}</div>
+        <div class="missao-recompensa">Recompensa: ${m.recompensa || "?"}</div>
+        ${m.status === "disponível" ? `<button class="aceitar-missao aceitar-verde" onclick="aceitarMissao('${m.id}')">Aceitar</button>` : ""}
+      `;
+      ul.appendChild(li);
+    });
+
+    // Adiciona animação de entrada
+    ul.classList.remove("fade-out");
+    ul.classList.add("fade-in");
+  }, 200);
+}
+function filtrarMissoes(status) {
+  if (!window.missoesTodas) return;
+  const filtradas = window.missoesTodas.filter(m => m.status === status);
+  renderizarMissoes(filtradas);
+
+  // Atualiza classe active nos filtros
+  document.querySelectorAll('.filtro-card').forEach(card => {
+    card.classList.remove('active');
+  });
+  const statusMap = {
+    'disponível': 'cinza',
+    'em andamento': 'amarelo',
+    'concluída': 'verde'
+  };
+  const seletor = `.filtro-card.${statusMap[status]}`;
+  const ativo = document.querySelector(seletor);
+  if (ativo) ativo.classList.add('active');
+}
+
+    async function aceitarMissao(id) {
+      try {
+        const response = await fetch(`https://sitemeuemoz-o.onrender.com/aceitar-missao/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'em andamento' })
         });
 
         if (response.ok) {
-            alert('Missão aceita!'); // Confirmação para o usuário
-            buscarMissoes(); // Atualiza a lista de missões
+          alert('Missão aceita!');
+          buscarMissoes();
         } else {
-            throw new Error('Erro ao aceitar missão');
+          throw new Error('Erro ao aceitar missão');
         }
-    } catch (error) {
-        console.error('Erro ao aceitar missão:', error);
+      } catch (e) {
+        console.error('Erro ao aceitar missão:', e);
+      }
     }
-}
 
-        // Função para alternar a visibilidade das missões
-        function toggleSection(listId) {
-            const lista = document.getElementById(listId);
-            lista.classList.toggle("hidden");
+    window.onload = buscarMissoes;
+  </script>
+
+  <script>
+    window.addEventListener("load", async () => {
+      try {
+        const response = await fetch("https://sitemeuemoz-o.onrender.com/historico");
+        if (response.ok) {
+          document.getElementById("telaCarregamento").style.display = "none";
+        } else {
+          document.getElementById("telaCarregamento").innerHTML = "Erro ao conectar. Tente novamente mais tarde.";
         }
-
-        // Chama a função para carregar as missões ao carregar a página
-        window.onload = buscarMissoes;
-    </script>
-    <script>
-        window.addEventListener("load", async () => {
-          try {
-            const response = await fetch("https://sitemeuemoz-o.onrender.com/historico");
-            if (response.ok) {
-              document.getElementById("telaCarregamento").style.display = "none";
-            } else {
-              document.getElementById("telaCarregamento").innerHTML = "Erro ao conectar. Tente novamente mais tarde.";
-            }
-          } catch (e) {
-            document.getElementById("telaCarregamento").innerHTML = "Servidor indisponível. Tente novamente em instantes.";
-          }
-        });
-      </script>
-      
+      } catch (e) {
+        document.getElementById("telaCarregamento").innerHTML = "Servidor indisponível. Tente novamente em instantes.";
+      }
+    });
+  </script>
 </body>
 </html>
